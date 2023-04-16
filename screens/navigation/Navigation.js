@@ -6,7 +6,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 
 import TabBar from "./TabBar";
-import LoginScreen from "../login/LoginScreen";
+import LoginScreen from "../login/src/LoginScreen";
 
 const Tab = createMaterialBottomTabNavigator();
 const Stack = createNativeStackNavigator();
