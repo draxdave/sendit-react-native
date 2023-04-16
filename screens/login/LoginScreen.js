@@ -1,16 +1,13 @@
 import { useState } from "react";
 import { View, Text, SafeAreaView } from "react-native";
-// import { Tick } from "./tick.svg";
-
+import TickIcon from "./assets/images/Tick";
+import DeviceIcon from "./assets/images/DeviceIcon";
 
 
 const LoginScreen = ({ navigation, route }) => {
   const gotoConnections = () => {
-    navigation.navigate("Connections");
+    navigation.navigate("Home");
   };
-  const [uri, setUri] = useState(
-    'tick.svg',
-  );
   
   return (
     <SafeAreaView>
@@ -18,9 +15,11 @@ const LoginScreen = ({ navigation, route }) => {
         <Text onPress={gotoConnections}>
           Login Screen `{route.params?.text}`
         </Text>
-        {/* <Tick width={120} height={40}/> */}
+       <TickIcon width={120} height={40}/>
+       <DeviceIcon/>
       </View>
     </SafeAreaView>
+
   );
 };
 
