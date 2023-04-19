@@ -1,9 +1,17 @@
 import { useState } from "react";
-import { Button, Image, StyleSheet, TextInput, View } from "react-native";
+import {
+  Button,
+  Image,
+  Pressable,
+  StyleSheet,
+  TextInput,
+  View,
+} from "react-native";
 import md5 from "md5";
 import InputEmailIcon from "./images/InputEmailIcon";
 import InputPasswordIcon from "./images/InputPasswordIcon";
 import SText from "../../../../src/components/SText";
+import MainApi from "../../../../src/components/network/MainApi";
 
 const LoginFormComponent = (props) => {
   const [username, setUsername] = useState("");
@@ -13,40 +21,29 @@ const LoginFormComponent = (props) => {
   const handleLogin = () => {
     props.setLoading(true);
     console.log(username, password);
-
-    let baseUrl = "http://draxs.com/api";
-    const LOGIN_API = "/user/signin";
-    const API_VERSION = "/v2";
-
-    let finalUrl = `${baseUrl}${API_VERSION}${LOGIN_API}`;
-
-    const response = fetch(finalUrl, {
-      method: "POST",
-      headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        email: username,
-        device_id: md5("yourOtherValue"),
-        instance_id: "",
-        password_hash: md5(password),
-      }),
-    })
-      .then((response) => response.json())
-      .then((json) => {
-        console.log(json);
+    let data = {
+      email: username,
+      device_id: md5("yourOtherValue"),
+      instance_id: "",
+      password_hash: md5(password),
+    };
+    let callback = {
+      onSuccess: (response) => {
         props.setLoading(false);
-        setMessage(JSON.stringify(json));
-        return json.statusCode;
-      })
-      .catch((error) => {
-        console.error(error);
+        setMessage(JSON.stringify(response));
+      },
+      onFailure: (error) => {
+        console.log(error);
         setMessage(error.message);
         props.setLoading(false);
-      });
+      },
+    };
 
-    console.log(response);
+    MainApi({
+      request: "signin",
+      data: data,
+      callback: callback,
+    });
   };
 
   return (
@@ -75,15 +72,49 @@ const LoginFormComponent = (props) => {
             style={styles.inputText}
           />
         </View>
+        <SText style={styles.forgetPassword} textType="secondary">
+          Forgot your password?
+        </SText>
 
-        <Button title="Sign In" onPress={handleLogin} />
+        <Button
+          title="Sign In"
+          onPress={handleLogin}
+          color="#7151ff"
+          style={styles.submitButton}
+        />
         <SText>{message}</SText>
+        <SText textType="secondary">Create An Account Now!</SText>
+
+        <Pressable style={styles.googleSignIn}>
+          <SText textType="secondary" style={styles.googleSignInText}>
+            Sign In With Google
+          </SText>
+        </Pressable>
       </View>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
+  googleSignIn: {
+    marginTop: 16,
+    backgroundColor: "#232323",
+    paddingHorizontal: 20,
+    paddingVertical: 10,
+    borderRadius: 8,
+  },
+  googleSignInText: {
+    fontSize: 18,
+    color: "#fff",
+  },
+  forgetPassword: {
+    alignSelf: "flex-start",
+    marginLeft: "10%",
+    textDecorationLine: "underline",
+    marginTop: 8,
+    color: "#656565",
+    paddingLeft: 12,
+  },
   root: {
     justifyContent: "center",
     alignItems: "center",
@@ -98,7 +129,9 @@ const styles = StyleSheet.create({
     width: "80%",
     fontSize: 20,
     color: "black",
-    margin: 10,
+    marginTop: 10,
+    marginLeft: 10,
+    marginRight: 10,
     padding: 10,
     borderWidth: 1,
     borderColor: "gray",
@@ -112,6 +145,10 @@ const styles = StyleSheet.create({
   icon: {
     width: "20%",
     height: "20%",
+  },
+  submitButton: {
+    color: "#7151ff",
+    margin: 16,
   },
 });
 export default LoginFormComponent;
