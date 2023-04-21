@@ -12,6 +12,7 @@ import InputEmailIcon from "./images/InputEmailIcon";
 import InputPasswordIcon from "./images/InputPasswordIcon";
 import SText from "../../../../src/components/SText";
 import MainApi from "../../../../src/components/network/MainApi";
+import GoogleIcon from "./images/GoogleIcon";
 
 const LoginFormComponent = (props) => {
   const [username, setUsername] = useState("");
@@ -86,6 +87,7 @@ const LoginFormComponent = (props) => {
         <SText textType="secondary">Create An Account Now!</SText>
 
         <Pressable style={styles.googleSignIn}>
+          <GoogleIcon />
           <SText textType="secondary" style={styles.googleSignInText}>
             Sign In With Google
           </SText>
@@ -102,10 +104,14 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     paddingVertical: 10,
     borderRadius: 8,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
   },
   googleSignInText: {
     fontSize: 18,
     color: "#fff",
+    marginStart: 16,
   },
   forgetPassword: {
     alignSelf: "flex-start",
