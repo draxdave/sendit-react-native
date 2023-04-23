@@ -13,6 +13,8 @@ import InputPasswordIcon from "./images/InputPasswordIcon";
 import SText from "../../../../src/components/SText";
 import MainApi from "../../../../src/components/network/MainApi";
 import GoogleIcon from "./images/GoogleIcon";
+import { useSelector, useDispatch } from "react-redux";
+import { LoggedInAction } from "../../../../src/storage/redux/LoginAction";
 
 const LoginFormComponent = (props) => {
   const [username, setUsername] = useState("");
@@ -20,6 +22,12 @@ const LoginFormComponent = (props) => {
   const [password, setPassword] = useState("");
   const [passwordValidation, setPasswordValidation] = useState("");
   const [message, setMessage] = useState("");
+
+  const dispatch = useDispatch();
+
+  const handleLoggedIn = () => {
+    dispatch(LoggedInAction(true));
+  };
 
   const checkIfUsernamePasswordValidThenLogin = () => {
     setMessage("");
@@ -60,7 +68,7 @@ const LoginFormComponent = (props) => {
       onSuccess: (response) => {
         let token = response.data.token;
         props.setLoading(false);
-        props.setLoggedIn(true);
+        handleLoggedIn(token);
       },
       onFailure: (error) => {
         console.log(error);
@@ -111,7 +119,7 @@ const LoginFormComponent = (props) => {
               style={styles.inputText}
             />
             <SText style={styles.inputError} textType="secondary">
-              {usernameValidation}
+              {passwordValidation}
             </SText>
           </View>
         </View>
@@ -131,6 +139,7 @@ const LoginFormComponent = (props) => {
         <Pressable
           style={styles.googleSignIn}
           android_ripple={{ color: "#000" }}
+          onPress={handleLoggedIn}
         >
           <GoogleIcon />
           <SText textType="secondary" style={styles.googleSignInText}>

@@ -17,18 +17,13 @@ import LoginFormComponent from "./components/LoginForm";
 const LoginScreen = ({ navigation, route }) => {
   const { t, i18n } = useTranslation();
 
-
   const [loadingVisible, setLoadingVisible] = useState(false);
-  const [loggedIn, setLoggedIn] = useState(false);
 
-  if(loggedIn){
-    navigation.navigate("Home");
-  }
   return (
     <SafeAreaView>
       <View style={styles.container}>
         <HeaderComponent translations={t} />
-        <LoginFormComponent setLoading={setLoadingVisible} setLoggedIn={setLoggedIn} />
+        <LoginFormComponent setLoading={setLoadingVisible} />
         <SText style={styles.versionText}>{version}</SText>
         <Modal
           animationType="slide"
