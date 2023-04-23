@@ -16,27 +16,59 @@ import GoogleIcon from "./images/GoogleIcon";
 
 const LoginFormComponent = (props) => {
   const [username, setUsername] = useState("");
+  const [usernameValidation, setUsernameValidation] = useState("");
   const [password, setPassword] = useState("");
+  const [passwordValidation, setPasswordValidation] = useState("");
   const [message, setMessage] = useState("");
 
-  const handleLogin = () => {
+  const checkIfUsernamePasswordValidThenLogin = () => {
+    setMessage("");
+    let isUsernameValid = false;
+    let isPasswordValid = false;
+    if (username.length === 0) {
+      setUsernameValidation("Required");
+    } else if (username.length > 250) {
+      setUsernameValidation("Too long");
+    } else {
+      setUsernameValidation("");
+      isUsernameValid = true;
+    }
+
+    if (password.length === 0) {
+      setPasswordValidation("Required");
+    } else if (password.length > 250) {
+      setPasswordValidation("Too long");
+    } else {
+      setPasswordValidation("");
+      isPasswordValid = true;
+    }
+    if (isPasswordValid && isUsernameValid) {
+      tryLogin();
+    }
+  };
+
+  const tryLogin = () => {
     props.setLoading(true);
     console.log(username, password);
     let data = {
       email: username,
       device_id: md5("yourOtherValue"),
-      instance_id: "",
+      instance_id: "instance_id",
       password_hash: md5(password),
     };
     let callback = {
       onSuccess: (response) => {
+        let token = response.data.token;
         props.setLoading(false);
-        setMessage(JSON.stringify(response));
+        props.setLoggedIn(true);
       },
       onFailure: (error) => {
         console.log(error);
-        setMessage(error.message);
         props.setLoading(false);
+
+        let message = error.error.description;
+
+        setMessage(message);
       },
     };
 
@@ -52,26 +84,36 @@ const LoginFormComponent = (props) => {
       <View style={styles.container}>
         <View style={styles.inputField}>
           <InputEmailIcon height="50%" width="10%" />
-          <TextInput
-            style={styles.inputText}
-            inputMode="email"
-            textContentType="username"
-            maxLength={250}
-            value={username}
-            onChangeText={setUsername}
-            placeholder="Enter your email address"
-          />
+          <View style={styles.inputContainer}>
+            <TextInput
+              style={styles.inputText}
+              inputMode="email"
+              textContentType="username"
+              maxLength={250}
+              value={username}
+              onChangeText={setUsername}
+              placeholder="Enter your email address"
+            />
+            <SText style={styles.inputError} textType="secondary">
+              {usernameValidation}
+            </SText>
+          </View>
         </View>
         <View style={styles.inputField}>
           <InputPasswordIcon height="40%" width="10%" />
-          <TextInput
-            value={password}
-            maxLength={250}
-            onChangeText={setPassword}
-            textContentType="password"
-            placeholder="Enter your Password"
-            style={styles.inputText}
-          />
+          <View style={styles.inputContainer}>
+            <TextInput
+              value={password}
+              maxLength={250}
+              onChangeText={setPassword}
+              textContentType="password"
+              placeholder="Enter your Password"
+              style={styles.inputText}
+            />
+            <SText style={styles.inputError} textType="secondary">
+              {usernameValidation}
+            </SText>
+          </View>
         </View>
         <SText style={styles.forgetPassword} textType="secondary">
           Forgot your password?
@@ -79,14 +121,17 @@ const LoginFormComponent = (props) => {
 
         <Button
           title="Sign In"
-          onPress={handleLogin}
+          onPress={checkIfUsernamePasswordValidThenLogin}
           color="#7151ff"
           style={styles.submitButton}
         />
-        <SText>{message}</SText>
+        <SText style={styles.formMessage}>{message}</SText>
         <SText textType="secondary">Create An Account Now!</SText>
 
-        <Pressable style={styles.googleSignIn}>
+        <Pressable
+          style={styles.googleSignIn}
+          android_ripple={{ color: "#000" }}
+        >
           <GoogleIcon />
           <SText textType="secondary" style={styles.googleSignInText}>
             Sign In With Google
@@ -98,6 +143,16 @@ const LoginFormComponent = (props) => {
 };
 
 const styles = StyleSheet.create({
+  inputContainer: {
+    width: "80%",
+  },
+  inputError: {
+    color: "#994444",
+    marginLeft: 10,
+  },
+  formMessage: {
+    color: "#994444",
+  },
   googleSignIn: {
     marginTop: 16,
     backgroundColor: "#232323",
@@ -132,7 +187,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   inputText: {
-    width: "80%",
+    width: "100%",
     fontSize: 20,
     color: "black",
     marginTop: 10,

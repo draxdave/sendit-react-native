@@ -7,6 +7,7 @@ import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityI
 
 import TabBar from "./TabBar";
 import LoginScreen from "../login/src/LoginScreen";
+import { useState } from "react";
 
 const Tab = createMaterialBottomTabNavigator();
 const Stack = createNativeStackNavigator();
@@ -45,9 +46,11 @@ const HomeScreen = () => {
 };
 
 const NavComponent = () => {
+  const [loggedIn, setLoggedIn] = useState(true);
+
   return (
     <NavigationContainer>
-      <Stack.Navigator initialRouteName="Login">
+      <Stack.Navigator initialRouteName={loggedIn ? "Home": "Login"}>
         <Stack.Screen name="Home" component={HomeScreen} />
         <Stack.Screen name="Login" component={LoginScreen} />
       </Stack.Navigator>

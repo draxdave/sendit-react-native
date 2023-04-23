@@ -1,4 +1,4 @@
-import { API_VERSION, BASE_URL_PRD } from "../../../config";
+import { API_VERSION, BASE_URL_LOCAL, BASE_URL_PRD } from "../../../config";
 import * as Localization from 'expo-localization';
 import Constants from 'expo-constants';
 import { Device } from 'expo-device';
@@ -26,7 +26,7 @@ const MainApi: FunctionComponent<MainApiProps> = ({
   }
 
   function call(api, method, body, callback: ApiResult, headers=generateHeasers()) {
-    let finalUrl = `${BASE_URL_PRD}${API_VERSION}${api}`;
+    let finalUrl = `${BASE_URL_LOCAL}${API_VERSION}${api}`;
 
     console.log(`Calling (${method}) ${finalUrl}\nHeaders (${JSON.stringify(headers)})\nBody${JSON.stringify(body)} `);
    
@@ -38,12 +38,22 @@ const MainApi: FunctionComponent<MainApiProps> = ({
       .then((response) => response.json())
       .then((json) => {
         console.log(json);
-        callback.onSuccess(json);
+        if (json.error) {
+          callback.onFailure(json)
+        } else {
+          callback.onSuccess(json);
+        }
         return json.statusCode;
       })
       .catch((error) => {
         console.error(error);
-        callback.onFailure(error);
+        callback.onFailure({
+          statusCode: error.statusCode ?? 0,
+          error: {
+            type: error.code ?? 0,
+            description: error.message ?? "An error occurred. Please try again."
+          }
+        });
       });
   }
 
