@@ -15,6 +15,15 @@ import MainApi from "../../../../src/components/network/MainApi";
 import GoogleIcon from "./images/GoogleIcon";
 import { useSelector, useDispatch } from "react-redux";
 import { LoggedInAction } from "../../../../src/storage/redux/LoginAction";
+import {
+  GoogleSignin,
+  GoogleSigninButton,
+  statusCodes,
+} from '@react-native-google-signin/google-signin';
+
+GoogleSignin.configure({
+  webClientId: "407813379503-e87sk4s7pg5373kis43qrjihr1rb66lk.apps.googleusercontent.com"
+});
 
 const LoginFormComponent = (props) => {
   const [username, setUsername] = useState("");
@@ -27,6 +36,34 @@ const LoginFormComponent = (props) => {
 
   const handleLoggedIn = () => {
     dispatch(LoggedInAction(true));
+  };
+
+  const handleGoogleSignIn = async () => {
+    try {
+      props.setLoading(true);
+      await GoogleSignin.hasPlayServices();
+      const userInfo = await GoogleSignin.signIn();
+      // this.setState({ userInfo });
+      console.log("userInfo")
+      console.log(userInfo)
+      props.setLoading(false);
+    } catch (error) {
+      props.setLoading(false);
+      if (error.code === statusCodes.SIGN_IN_CANCELLED) {
+        console.log("statusCodes.SIGN_IN_CANCELLED")
+        // user cancelled the login flow
+      } else if (error.code === statusCodes.IN_PROGRESS) {
+        // operation (e.g. sign in) is in progress already
+        console.log("statusCodes.IN_PROGRESS")
+      } else if (error.code === statusCodes.PLAY_SERVICES_NOT_AVAILABLE) {
+        // play services not available or outdated
+        console.log("statusCodes.PLAY_SERVICES_NOT_AVAILABLE")
+      } else {
+        console.log("statusCodes. OTHER:");
+        console.log(JSON.stringify(error));
+        // some other error happened
+      }
+    }
   };
 
   const checkIfUsernamePasswordValidThenLogin = () => {
@@ -139,7 +176,7 @@ const LoginFormComponent = (props) => {
         <Pressable
           style={styles.googleSignIn}
           android_ripple={{ color: "#000" }}
-          onPress={handleLoggedIn}
+          onPress={handleGoogleSignIn}
         >
           <GoogleIcon />
           <SText textType="secondary" style={styles.googleSignInText}>

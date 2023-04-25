@@ -23,7 +23,7 @@
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "app.siamak.sendit"
+      "package": "app.siamak.senditdebug"
     },
     "web": {
       "favicon": "./assets/favicon.png"
