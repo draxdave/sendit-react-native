@@ -14,7 +14,10 @@ import SText from "../../../../src/components/SText";
 import MainApi from "../../../../src/components/network/MainApi";
 import GoogleIcon from "./images/GoogleIcon";
 import { useSelector, useDispatch } from "react-redux";
-import { LoggedInAction } from "../../../../src/storage/redux/LoginAction";
+import {
+  LoggedInAction,
+  ApiTokenAction,
+} from "../../../../src/storage/redux/LoginAction";
 import {
   GoogleSignin,
   GoogleSigninButton,
@@ -39,7 +42,8 @@ const LoginFormComponent = (props) => {
 
   const dispatch = useDispatch();
 
-  const handleLoggedIn = () => {
+  const handleLoggedIn = (token) => {
+    dispatch(ApiTokenAction(token));
     dispatch(LoggedInAction(true));
   };
 
@@ -47,10 +51,9 @@ const LoginFormComponent = (props) => {
     try {
       props.setLoading(true);
       await GoogleSignin.hasPlayServices();
-      const {user, idToken} = await GoogleSignin.signIn();
-      
-      trySSO(user.email, idToken)
+      const { user, idToken } = await GoogleSignin.signIn();
 
+      trySSO(user.email, idToken);
     } catch (error) {
       props.setLoading(false);
       setMessage("Error loading user\n Please try again");
@@ -98,7 +101,6 @@ const LoginFormComponent = (props) => {
   };
 
   const trySSO = (email, idToken) => {
-    console.log("email");
     console.log(username, password);
     let data = {
       id_token: idToken,
@@ -161,11 +163,12 @@ const LoginFormComponent = (props) => {
     });
   };
 
-  const fetchInstanceId = async () => {
+  (async () => {
     const deviceToken = await messaging().getToken();
     setInstanceId(deviceToken);
-  };
-  fetchInstanceId();
+  })().catch((error) => {
+    console.log(`Error while trying to get instance ID :${error}`);
+  });
 
   return (
     <View style={styles.root}>

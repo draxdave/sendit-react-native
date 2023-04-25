@@ -1,11 +1,11 @@
-import { IS_LOGGED_IN } from "./LoginAction";
+import { IS_LOGGED_IN, API_TOKEN } from "./LoginAction";
 
 
 const initialState = {
   loggedIn: false
 };
 
-const isLoggedInReducer = (state = initialState, action) => {
+const LoginReducer = (state = initialState, action) => {
   switch (action.type) {
     case IS_LOGGED_IN: {
       const { isLoggedIn } = action.payload
@@ -14,9 +14,16 @@ const isLoggedInReducer = (state = initialState, action) => {
         loggedIn: isLoggedIn
       };
     }
+    case API_TOKEN: {
+      const { token } = action.payload
+      return {
+        ...state,
+        apiToken: token
+      };
+    }
     default:
       return state;
   }
 }
 
-export default isLoggedInReducer;
+export default LoginReducer;
