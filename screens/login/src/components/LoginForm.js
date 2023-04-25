@@ -22,11 +22,11 @@ import {
 } from "@react-native-google-signin/google-signin";
 import messaging from "@react-native-firebase/messaging";
 import { PermissionsAndroid } from "react-native";
+import { WEB_CLIENT_ID } from "../../../../config";
 PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS);
 
 GoogleSignin.configure({
-  webClientId:
-    "407813379503-e87sk4s7pg5373kis43qrjihr1rb66lk.apps.googleusercontent.com",
+  webClientId: WEB_CLIENT_ID,
 });
 
 const LoginFormComponent = (props) => {
@@ -47,13 +47,10 @@ const LoginFormComponent = (props) => {
     try {
       props.setLoading(true);
       await GoogleSignin.hasPlayServices();
-      const signinData = await GoogleSignin.signIn();
-      const deviceToken = await messaging().getToken();
-      setInstanceId(deviceToken);
-      // trySSO(
-        
-      //   { idToken }
-      // )
+      const {user, idToken} = await GoogleSignin.signIn();
+      
+      trySSO(user.email, idToken)
+
     } catch (error) {
       props.setLoading(false);
       setMessage("Error loading user\n Please try again");
@@ -101,11 +98,12 @@ const LoginFormComponent = (props) => {
   };
 
   const trySSO = (email, idToken) => {
+    console.log("email");
     console.log(username, password);
     let data = {
       id_token: idToken,
       email: email,
-      instance_id: fcmData.instanceId,
+      instance_id: instanceId,
       device_id: md5("yourOtherValue"),
     };
     let callback = {
@@ -125,7 +123,7 @@ const LoginFormComponent = (props) => {
     };
 
     MainApi({
-      request: "signin",
+      request: "googleSignIn",
       data: data,
       callback: callback,
     });
@@ -137,7 +135,7 @@ const LoginFormComponent = (props) => {
     let data = {
       email: username,
       device_id: md5("yourOtherValue"),
-      instance_id: fcmData.instanceId,
+      instance_id: instanceId,
       password_hash: md5(password),
     };
     let callback = {
@@ -162,6 +160,12 @@ const LoginFormComponent = (props) => {
       callback: callback,
     });
   };
+
+  const fetchInstanceId = async () => {
+    const deviceToken = await messaging().getToken();
+    setInstanceId(deviceToken);
+  };
+  fetchInstanceId();
 
   return (
     <View style={styles.root}>

@@ -25,6 +25,11 @@ const MainApi: FunctionComponent<MainApiProps> = ({
     call(LOGIN_API, "POST", body, callback);
   }
 
+  function signinSsoCall(body, callback: ApiResult) {
+    const targetApi = "/user/signin_sso";
+    call(targetApi, "POST", body, callback);
+  }
+
   function call(api, method, body, callback: ApiResult, headers=generateHeasers()) {
     let finalUrl = `${BASE_URL_LOCAL}${API_VERSION}${api}`;
 
@@ -87,6 +92,7 @@ const MainApi: FunctionComponent<MainApiProps> = ({
     case "signup":
       break;
     case "googleSignIn":
+      signinSsoCall(data, callback);
       break;
     default:
   }
