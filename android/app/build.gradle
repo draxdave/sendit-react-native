@@ -113,7 +113,6 @@ android {
 
     compileSdkVersion rootProject.ext.compileSdkVersion
 
-    namespace 'app.siamak.sendit'
     defaultConfig {
         applicationId 'app.siamak.senditdebug'
         minSdkVersion rootProject.ext.minSdkVersion

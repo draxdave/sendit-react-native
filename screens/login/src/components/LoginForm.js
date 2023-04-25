@@ -19,10 +19,14 @@ import {
   GoogleSignin,
   GoogleSigninButton,
   statusCodes,
-} from '@react-native-google-signin/google-signin';
+} from "@react-native-google-signin/google-signin";
+import messaging from "@react-native-firebase/messaging";
+import { PermissionsAndroid } from "react-native";
+PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS);
 
 GoogleSignin.configure({
-  webClientId: "407813379503-e87sk4s7pg5373kis43qrjihr1rb66lk.apps.googleusercontent.com"
+  webClientId:
+    "407813379503-e87sk4s7pg5373kis43qrjihr1rb66lk.apps.googleusercontent.com",
 });
 
 const LoginFormComponent = (props) => {
@@ -31,6 +35,7 @@ const LoginFormComponent = (props) => {
   const [password, setPassword] = useState("");
   const [passwordValidation, setPasswordValidation] = useState("");
   const [message, setMessage] = useState("");
+  const [instanceId, setInstanceId] = useState("");
 
   const dispatch = useDispatch();
 
@@ -42,22 +47,25 @@ const LoginFormComponent = (props) => {
     try {
       props.setLoading(true);
       await GoogleSignin.hasPlayServices();
-      const userInfo = await GoogleSignin.signIn();
-      // this.setState({ userInfo });
-      console.log("userInfo")
-      console.log(userInfo)
-      props.setLoading(false);
+      const signinData = await GoogleSignin.signIn();
+      const deviceToken = await messaging().getToken();
+      setInstanceId(deviceToken);
+      // trySSO(
+        
+      //   { idToken }
+      // )
     } catch (error) {
       props.setLoading(false);
+      setMessage("Error loading user\n Please try again");
       if (error.code === statusCodes.SIGN_IN_CANCELLED) {
-        console.log("statusCodes.SIGN_IN_CANCELLED")
+        console.log("statusCodes.SIGN_IN_CANCELLED");
         // user cancelled the login flow
       } else if (error.code === statusCodes.IN_PROGRESS) {
         // operation (e.g. sign in) is in progress already
-        console.log("statusCodes.IN_PROGRESS")
+        console.log("statusCodes.IN_PROGRESS");
       } else if (error.code === statusCodes.PLAY_SERVICES_NOT_AVAILABLE) {
         // play services not available or outdated
-        console.log("statusCodes.PLAY_SERVICES_NOT_AVAILABLE")
+        console.log("statusCodes.PLAY_SERVICES_NOT_AVAILABLE");
       } else {
         console.log("statusCodes. OTHER:");
         console.log(JSON.stringify(error));
@@ -92,13 +100,44 @@ const LoginFormComponent = (props) => {
     }
   };
 
+  const trySSO = (email, idToken) => {
+    console.log(username, password);
+    let data = {
+      id_token: idToken,
+      email: email,
+      instance_id: fcmData.instanceId,
+      device_id: md5("yourOtherValue"),
+    };
+    let callback = {
+      onSuccess: (response) => {
+        let token = response.data.token;
+        props.setLoading(false);
+        handleLoggedIn(token);
+      },
+      onFailure: (error) => {
+        console.log(error);
+        props.setLoading(false);
+
+        let message = error.error.description;
+
+        setMessage(message);
+      },
+    };
+
+    MainApi({
+      request: "signin",
+      data: data,
+      callback: callback,
+    });
+  };
+
   const tryLogin = () => {
     props.setLoading(true);
     console.log(username, password);
     let data = {
       email: username,
       device_id: md5("yourOtherValue"),
-      instance_id: "instance_id",
+      instance_id: fcmData.instanceId,
       password_hash: md5(password),
     };
     let callback = {
