@@ -7,7 +7,7 @@ import { StatusBar } from "react-native";
 const Tab = createMaterialBottomTabNavigator();
 const HomeScreen = () => {
   return (
-    <Tab.Navigator initialRouteName="Connections">
+    <Tab.Navigator initialRouteName="Messages">
       <Tab.Screen
         name="Connections"
         component={ConnectionsScreen}

@@ -1,6 +1,8 @@
-import { View, Text, SafeAreaView } from "react-native";
+import { View, Text, SafeAreaView, StyleSheet } from "react-native";
 import { useDispatch } from "react-redux";
 import { LoggedInAction } from "../../src/storage/redux/LoginAction";
+import NetworkApiComponent from "../../src/components/network/NetworkApiComponent";
+import MessagesListComponent from "./components/MessagesListComponent";
 
 
 const MessagesScreen = ({ navigation }) => {
@@ -12,18 +14,20 @@ const MessagesScreen = ({ navigation }) => {
   }
 
   return (
-    <SafeAreaView>
-      <View>
-        <Text
-          onPress={
-            handleLoggedOut
-          }
-        >
-          Messages Screen
-        </Text>
-      </View>
-    </SafeAreaView>
+    <NetworkApiComponent>
+      <SafeAreaView>
+        <View style={styles.container}>
+          <MessagesListComponent />
+        </View>
+      </SafeAreaView>
+    </NetworkApiComponent>
   );
 };
+
+const styles = StyleSheet.create({
+  container: {
+    height: "100%",
+  },
+});
 
 export default MessagesScreen;
