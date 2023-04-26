@@ -3,11 +3,25 @@ import MessagesScreen from "../messages/MessagesScreen";
 import ConnectionsScreen from "../connections/ConnectionsScreen";
 import { createMaterialBottomTabNavigator } from "@react-navigation/material-bottom-tabs";
 import { StatusBar } from "react-native";
+import QRScreen from "../QR/QRScreen";
 
 const Tab = createMaterialBottomTabNavigator();
 const HomeScreen = () => {
   return (
-    <Tab.Navigator initialRouteName="Messages">
+    <Tab.Navigator initialRouteName="QR">
+      <Tab.Screen
+        name="QR"
+        component={QRScreen}
+        options={{
+          tabBarIcon: ({ color }) => (
+            <MaterialCommunityIcons
+              name="qrcode"
+              color={color}
+              size={26}
+            />
+          ),
+        }}
+      />
       <Tab.Screen
         name="Connections"
         component={ConnectionsScreen}

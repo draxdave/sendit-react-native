@@ -1,8 +1,13 @@
-import { CONNECTIONS_UPDATE, MESSAGES_UPDATE } from "./CoreAction";
+import {
+  CONNECTIONS_UPDATE,
+  MESSAGES_UPDATE,
+  QR_URL_UPDATE,
+} from "./CoreAction";
 
 const initialState = {
   connections: [],
   messages: [],
+  qrCodeUrl: "",
 };
 
 const CoreReducer = (state = initialState, action) => {
@@ -19,6 +24,13 @@ const CoreReducer = (state = initialState, action) => {
       return {
         ...state,
         messages: messages,
+      };
+    }
+    case QR_URL_UPDATE: {
+      const { qrCodeUrl } = action.payload;
+      return {
+        ...state,
+        qrCodeUrl: qrCodeUrl,
       };
     }
 

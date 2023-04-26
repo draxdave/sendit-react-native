@@ -1,12 +1,19 @@
 import { Children, cloneElement, isValidElement } from "react";
-import { API_VERSION, BASE_URL_LOCAL, BASE_URL_PRD } from "../../../config";
+import { API_VERSION, BASE_URL } from "../../../config";
 import * as Localization from "expo-localization";
 import Constants from "expo-constants";
 import { Device } from "expo-device";
 import { Platform } from "react-native";
 
 type MainApiProps = {
-  request: "signin" | "signup" | "googleSignIn" | "whois" | "signout" | "getConnections",
+  request:
+    | "signin"
+    | "signup"
+    | "googleSignIn"
+    | "whois"
+    | "signout"
+    | "getConnections"
+    | "getQr",
   callback: ApiResult,
   data: any,
 };
@@ -40,6 +47,9 @@ class MainApi implements MainApiInterface {
         break;
       case "getConnections":
         this.getConnections(data, callback);
+        break;
+      case "getQr":
+        this.getQRUrl(data, callback);
         break;
       case "signout":
         this.signout(data, callback);
@@ -81,6 +91,11 @@ class MainApi implements MainApiInterface {
     this.exec(targetApi, "GET", body, callback);
   }
 
+  getQRUrl(body, callback: ApiResult) {
+    const targetApi = "/device/pair/qr";
+    this.exec(targetApi, "GET", body, callback);
+  }
+
   getConnections(body, callback: ApiResult) {
     const targetApi = "/connections";
     this.exec(targetApi, "GET", body, callback);
@@ -98,7 +113,7 @@ class MainApi implements MainApiInterface {
     callback: ApiResult,
     headers = this.generateHeasers()
   ) {
-    let finalUrl = `${BASE_URL_LOCAL}${API_VERSION}${api}`;
+    let finalUrl = `${BASE_URL}${API_VERSION}${api}`;
 
     console.log(
       `Calling (${method}) ${finalUrl}\nHeaders (${JSON.stringify(
