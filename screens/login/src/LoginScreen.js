@@ -13,6 +13,7 @@ import HeaderComponent from "./components/Header";
 import SText from "../../../src/components/SText";
 import { version } from "../../../package.json";
 import LoginFormComponent from "./components/LoginForm";
+import NetworkApiComponent from "../../../src/components/network/NetworkApiComponent";
 
 const LoginScreen = ({ navigation, route }) => {
   const { t, i18n } = useTranslation();
@@ -20,26 +21,28 @@ const LoginScreen = ({ navigation, route }) => {
   const [loadingVisible, setLoadingVisible] = useState(false);
 
   return (
-    <SafeAreaView>
-      <View style={styles.container}>
-        <HeaderComponent translations={t} />
-        <LoginFormComponent setLoading={setLoadingVisible} />
-        <SText style={styles.versionText}>{version}</SText>
-        <Modal
-          animationType="slide"
-          transparent={false}
-          visible={loadingVisible}
-          onRequestClose={() => {
-            setLoadingVisible(!modalVisible);
-          }}
-        >
-          <View style={styles.modalContainer}>
-            <ActivityIndicator size="small" color="#0000ff" />
-            <SText textType="primary">Loading</SText>
-          </View>
-        </Modal>
-      </View>
-    </SafeAreaView>
+    <NetworkApiComponent>
+      <SafeAreaView>
+        <View style={styles.container}>
+          <HeaderComponent translations={t} />
+          <LoginFormComponent setLoading={setLoadingVisible} />
+          <SText style={styles.versionText}>{version}</SText>
+          <Modal
+            animationType="slide"
+            transparent={false}
+            visible={loadingVisible}
+            onRequestClose={() => {
+              setLoadingVisible(!loadingVisible);
+            }}
+          >
+            <View style={styles.modalContainer}>
+              <ActivityIndicator size="small" color="#0000ff" />
+              <SText textType="primary">Loading</SText>
+            </View>
+          </Modal>
+        </View>
+      </SafeAreaView>
+    </NetworkApiComponent>
   );
 };
 

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Button,
   Image,
@@ -11,7 +11,7 @@ import md5 from "md5";
 import InputEmailIcon from "./images/InputEmailIcon";
 import InputPasswordIcon from "./images/InputPasswordIcon";
 import SText from "../../../../src/components/SText";
-import MainApi from "../../../../src/components/network/MainApi";
+import { MainApiInterface } from "../../../../src/components/network/NetworkApiComponent";
 import GoogleIcon from "./images/GoogleIcon";
 import { useSelector, useDispatch } from "react-redux";
 import {
@@ -32,14 +32,13 @@ GoogleSignin.configure({
   webClientId: WEB_CLIENT_ID,
 });
 
-const LoginFormComponent = (props) => {
-  const [username, setUsername] = useState("");
+const LoginFormComponent = ({ setLoading, networkApi }) => {
+  const [username, setUsername] = useState("email@gmail.com");
   const [usernameValidation, setUsernameValidation] = useState("");
-  const [password, setPassword] = useState("");
+  const [password, setPassword] = useState("1");
   const [passwordValidation, setPasswordValidation] = useState("");
   const [message, setMessage] = useState("");
   const [instanceId, setInstanceId] = useState("");
-
   const dispatch = useDispatch();
 
   const handleLoggedIn = (token) => {
@@ -49,13 +48,13 @@ const LoginFormComponent = (props) => {
 
   const handleGoogleSignIn = async () => {
     try {
-      props.setLoading(true);
+      setLoading(true);
       await GoogleSignin.hasPlayServices();
       const { user, idToken } = await GoogleSignin.signIn();
 
       trySSO(user.email, idToken);
     } catch (error) {
-      props.setLoading(false);
+      setLoading(false);
       setMessage("Error loading user\n Please try again");
       if (error.code === statusCodes.SIGN_IN_CANCELLED) {
         console.log("statusCodes.SIGN_IN_CANCELLED");
@@ -111,12 +110,12 @@ const LoginFormComponent = (props) => {
     let callback = {
       onSuccess: (response) => {
         let token = response.data.token;
-        props.setLoading(false);
+        setLoading(false);
         handleLoggedIn(token);
       },
       onFailure: (error) => {
         console.log(error);
-        props.setLoading(false);
+        setLoading(false);
 
         let message = error.error.description;
 
@@ -124,7 +123,7 @@ const LoginFormComponent = (props) => {
       },
     };
 
-    MainApi({
+    networkApi.call({
       request: "googleSignIn",
       data: data,
       callback: callback,
@@ -132,7 +131,7 @@ const LoginFormComponent = (props) => {
   };
 
   const tryLogin = () => {
-    props.setLoading(true);
+    setLoading(true);
     console.log(username, password);
     let data = {
       email: username,
@@ -143,12 +142,12 @@ const LoginFormComponent = (props) => {
     let callback = {
       onSuccess: (response) => {
         let token = response.data.token;
-        props.setLoading(false);
+        setLoading(false);
         handleLoggedIn(token);
       },
       onFailure: (error) => {
         console.log(error);
-        props.setLoading(false);
+        setLoading(false);
 
         let message = error.error.description;
 
@@ -156,7 +155,7 @@ const LoginFormComponent = (props) => {
       },
     };
 
-    MainApi({
+    networkApi.call({
       request: "signin",
       data: data,
       callback: callback,

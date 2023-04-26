@@ -1,41 +1,56 @@
+import { Children, cloneElement, isValidElement } from "react";
 import { API_VERSION, BASE_URL_LOCAL, BASE_URL_PRD } from "../../../config";
 import * as Localization from "expo-localization";
 import Constants from "expo-constants";
 import { Device } from "expo-device";
 import { Platform } from "react-native";
+
 import { useSelector } from "react-redux";
 
-
+type MainApiProps = {
+  request: "signin" | "signup" | "googleSignIn",
+  callback: ApiResult,
+  data: any,
+};
 
 type ApiResult = {
   onSuccess: () => {},
   onFailure: () => {},
 };
 
-const MainApi: FunctionComponent<MainApiProps> = ({
-  request,
-  data,
-  callback,
-}) => {
-  const apiToken = "useSelector((state) => state.apiToken)";
+interface MainApiInterface {
+    call(props: MainApiProps): void
+}
 
-  function signinCall(body, callback: ApiResult) {
+class MainApi implements MainApiInterface {
+  constructor(apiToken: String = "") {
+    this.apiToken = apiToken;
+  }
+  call({request, data, callback}) {
+    switch (request) {
+      case "signin":
+        this.signinCall(data, callback);
+        break;
+      case "signup":
+        break;
+      case "googleSignIn":
+        this.signinSsoCall(data, callback);
+        break;
+      default:
+    }
+  }
+
+  signinCall(body, callback: ApiResult) {
     const LOGIN_API = "/user/signin";
-    call(LOGIN_API, "POST", body, callback);
+    this.exec(LOGIN_API, "POST", body, callback);
   }
 
-  function signinSsoCall(body, callback: ApiResult) {
+  signinSsoCall(body, callback: ApiResult) {
     const targetApi = "/user/signin_sso";
-    call(targetApi, "POST", body, callback);
+    this.exec(targetApi, "POST", body, callback);
   }
 
-  function call(
-    api,
-    method,
-    body,
-    callback: ApiResult,
-    headers = generateHeasers()
-  ) {
+  exec(api, method, body, callback: ApiResult, headers = this.generateHeasers()) {
     let finalUrl = `${BASE_URL_LOCAL}${API_VERSION}${api}`;
 
     console.log(
@@ -72,7 +87,7 @@ const MainApi: FunctionComponent<MainApiProps> = ({
       });
   }
 
-  function generateHeasers() {
+  generateHeasers() {
     const appVersion = Constants.manifest.version;
     const deviceRegion = Localization.locale;
     const deviceModel = Device?.modelName ?? "model not available";
@@ -90,23 +105,29 @@ const MainApi: FunctionComponent<MainApiProps> = ({
       os: Platform.OS,
       "Device-Platform-Version": Device?.osVersion ?? "version not available",
       "Device-Model": deviceModel,
-      "api-key": apiToken,
+      "api-key": this.apiToken,
     };
 
     return headers;
   }
+}
 
-  switch (request) {
-    case "signin":
-      signinCall(data, callback);
-      break;
-    case "signup":
-      break;
-    case "googleSignIn":
-      signinSsoCall(data, callback);
-      break;
-    default:
-  }
+const NetworkApiComponent = ({ children }) => {
+  const apiToken = useSelector((state) => state.apiToken);
+
+  const networkApiObject:MainApiInterface = new MainApi(apiToken);
+
+  const addNetworkApi = (children) => {
+    return Children.map(children, (child) => {
+      if (!isValidElement(child)) return null;
+
+      return cloneElement(child, {
+        ...child.props,
+        children: addNetworkApi(child.props.children),
+        networkApi: networkApiObject,
+      });
+    });
+  };
+  return addNetworkApi(children);
 };
-
-export default MainApi;
+export default NetworkApiComponent;
