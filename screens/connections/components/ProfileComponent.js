@@ -15,15 +15,24 @@ export default ProfileComponent = () => {
   const device = useSelector((state) => state.device);
 
   const handleLogout = () => {
-    Alert.alert("Logout?", "Are you sure you want to log out?", [
-      {
-        text: "Yes, please log out",
-        onPress: () => {
-          dispatch(LoggedInAction(null, null));
+    Alert.alert(
+      "Logout?",
+      "Are you sure you want to log out?",
+      [
+        {
+          text: "Yes, please log out",
+          onPress: () => {
+            dispatch(LoggedInAction(null, null));
+          },
         },
-      },
-    ]);
+      ],
+      {
+        cancelable: true,
+      }
+    );
   };
+  let date = new Date(device.last_touch * 1000);
+  const formattedDate = date.toLocaleString();
 
   return (
     <View style={styles.container}>
@@ -38,13 +47,13 @@ export default ProfileComponent = () => {
       <View style={styles.headerTextContainer}>
         <View style={styles.headerTextRow}>
           <ProfileIcon />
-          <SText style={styles.headerText}>User Email</SText>
+          <SText style={styles.headerText}>{user.email}</SText>
         </View>
         <View style={styles.headerTextRow}>
           <DeviceUnknownIcon />
-          <SText style={styles.headerText}>Device Model</SText>
+          <SText style={styles.headerText}>{device.model}</SText>
         </View>
-        <SText style={styles.headerSubText}>Last Used: xxx</SText>
+        <SText style={styles.headerSubText}>Last Used: {formattedDate}</SText>
       </View>
     </View>
   );
