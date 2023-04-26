@@ -4,6 +4,9 @@ import { Provider } from "react-redux";
 import { store, persistor } from "./src/storage/redux/Store";
 import { PersistGate } from "redux-persist/integration/react";
 import SText from "./src/components/SText";
+import { PermissionsAndroid } from "react-native";
+
+PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS);
 
 export default function App() {
   return (

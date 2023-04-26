@@ -9,9 +9,10 @@ import { useSelector } from "react-redux";
 const Stack = createNativeStackNavigator();
 
 const NavComponent = () => {
-  const user = useSelector((state) => state.user);
-  const device = useSelector((state) => state.device);
+  const user = useSelector((state) => state.LoginReducer.user);
+  const device = useSelector((state) => state.LoginReducer.device);
   console.log(user);
+  console.log(device);
   
   return (
     <NavigationContainer>

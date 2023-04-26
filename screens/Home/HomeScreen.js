@@ -2,6 +2,7 @@ import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityI
 import MessagesScreen from "../messages/MessagesScreen";
 import ConnectionsScreen from "../connections/ConnectionsScreen";
 import { createMaterialBottomTabNavigator } from "@react-navigation/material-bottom-tabs";
+import { StatusBar } from "react-native";
 
 const Tab = createMaterialBottomTabNavigator();
 const HomeScreen = () => {

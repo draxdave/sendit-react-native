@@ -1,6 +1,7 @@
 import { View, Text, SafeAreaView, StyleSheet } from "react-native";
 import NetworkApiComponent from "../../src/components/network/NetworkApiComponent";
 import ProfileComponent from "./components/ProfileComponent";
+import ConnectionListComponent from "./components/ConnectionListComponent";
 
 const ConnectionsScreen = ({ navigation }) => {
   return (
@@ -8,6 +9,7 @@ const ConnectionsScreen = ({ navigation }) => {
       <SafeAreaView>
         <View style={styles.container}>
           <ProfileComponent />
+          <ConnectionListComponent/>
         </View>
       </SafeAreaView>
     </NetworkApiComponent>

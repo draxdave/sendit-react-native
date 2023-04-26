@@ -4,7 +4,7 @@ import MainApi from "./MainApi";
 import { LoggedInAction } from "../../storage/redux/LoginAction";
 
 const NetworkApiComponent = ({ children }) => {
-  const apiToken = useSelector((state) => state.apiToken);
+  const apiToken = useSelector((state) => state.LoginReducer.apiToken);
   const dispatch = useDispatch();
 
   const handleUnAuthorized = () => {

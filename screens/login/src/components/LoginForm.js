@@ -24,9 +24,7 @@ import {
   statusCodes,
 } from "@react-native-google-signin/google-signin";
 import messaging from "@react-native-firebase/messaging";
-import { PermissionsAndroid } from "react-native";
 import { WEB_CLIENT_ID } from "../../../../config";
-PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS);
 
 GoogleSignin.configure({
   webClientId: WEB_CLIENT_ID,
@@ -40,10 +38,6 @@ const LoginFormComponent = ({ setLoading, networkApi }) => {
   const [message, setMessage] = useState("");
   const [instanceId, setInstanceId] = useState("");
   const dispatch = useDispatch();
-
-  const handleLoggedIn = (token, user) => {
-    dispatch(LoggedInAction(user));
-  };
 
   const handleGoogleSignIn = async () => {
     try {

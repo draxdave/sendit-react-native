@@ -4,10 +4,11 @@ import { USER_INFO, API_TOKEN } from "./LoginAction";
 const initialState = {
   user: null,
   device: null,
-  apiToken: null
+  apiToken: null,
 };
 
 const LoginReducer = (state = initialState, action) => {
+  console.log(`type :${state.type}`);
   switch (action.type) {
     case USER_INFO: {
       const { user, device } = action.payload

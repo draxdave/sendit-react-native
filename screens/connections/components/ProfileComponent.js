@@ -11,8 +11,8 @@ import { LoggedInAction } from "../../../src/storage/redux/LoginAction";
 
 export default ProfileComponent = ({ networkApi }) => {
   const dispatch = useDispatch();
-  const user = useSelector((state) => state.user);
-  const device = useSelector((state) => state.device);
+  const user = useSelector((state) => state.LoginReducer.user);
+  const device = useSelector((state) => state.LoginReducer.device);
 
   const callSignOut = () => {
     let data = {};
