@@ -9,10 +9,24 @@ import { TouchableRipple } from "react-native-paper";
 import { useDispatch, useSelector } from "react-redux";
 import { LoggedInAction } from "../../../src/storage/redux/LoginAction";
 
-export default ProfileComponent = () => {
+export default ProfileComponent = ({ networkApi }) => {
   const dispatch = useDispatch();
   const user = useSelector((state) => state.user);
   const device = useSelector((state) => state.device);
+
+  const callSignOut = () => {
+    let data = {};
+    let callback = {
+      onSuccess: (response) => {},
+      onFailure: (error) => {},
+    };
+
+    networkApi.call({
+      request: "signout",
+      data: data,
+      callback: callback,
+    });
+  };
 
   const handleLogout = () => {
     Alert.alert(
@@ -23,6 +37,7 @@ export default ProfileComponent = () => {
           text: "Yes, please log out",
           onPress: () => {
             dispatch(LoggedInAction(null, null));
+            callSignOut();
           },
         },
       ],

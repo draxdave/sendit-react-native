@@ -4,13 +4,13 @@ import ProfileComponent from "./components/ProfileComponent";
 
 const ConnectionsScreen = ({ navigation }) => {
   return (
-    
+    <NetworkApiComponent>
       <SafeAreaView>
         <View style={styles.container}>
-          <ProfileComponent/>
+          <ProfileComponent />
         </View>
       </SafeAreaView>
-  
+    </NetworkApiComponent>
   );
 };
 
@@ -18,8 +18,6 @@ const styles = StyleSheet.create({
   container: {
     height: "100%",
   },
-  
 });
-
 
 export default ConnectionsScreen;

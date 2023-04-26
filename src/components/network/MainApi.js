@@ -6,7 +6,7 @@ import { Device } from "expo-device";
 import { Platform } from "react-native";
 
 type MainApiProps = {
-  request: "signin" | "signup" | "googleSignIn" | "whois",
+  request: "signin" | "signup" | "googleSignIn" | "whois" | "signout",
   callback: ApiResult,
   data: any,
 };
@@ -37,6 +37,9 @@ class MainApi implements MainApiInterface {
         break;
       case "googleSignIn":
         this.signinSsoCall(data, callback);
+        break;
+      case "signout":
+        this.signout(data, callback);
         break;
       default:
     }
@@ -73,6 +76,11 @@ class MainApi implements MainApiInterface {
   getMe(body, callback: ApiResult) {
     const targetApi = "/device/whois";
     this.exec(targetApi, "GET", body, callback);
+  }
+
+  signout(body, callback: ApiResult) {
+    const targetApi = "/device/signout";
+    this.exec(targetApi, "POST", body, callback);
   }
 
   exec(
