@@ -1,40 +1,86 @@
+import { Children, cloneElement, isValidElement } from "react";
 import { API_VERSION, BASE_URL_LOCAL, BASE_URL_PRD } from "../../../config";
 import * as Localization from "expo-localization";
 import Constants from "expo-constants";
 import { Device } from "expo-device";
 import { Platform } from "react-native";
-import { useSelector } from "react-redux";
 
-
+type MainApiProps = {
+  request: "signin" | "signup" | "googleSignIn" | "whois",
+  callback: ApiResult,
+  data: any,
+};
 
 type ApiResult = {
   onSuccess: () => {},
   onFailure: () => {},
 };
 
-const MainApi: FunctionComponent<MainApiProps> = ({
-  request,
-  data,
-  callback,
-}) => {
-  const apiToken = "useSelector((state) => state.apiToken)";
+interface MainApiInterface {
+  call(props: MainApiProps): void;
+}
 
-  function signinCall(body, callback: ApiResult) {
+class MainApi implements MainApiInterface {
+  constructor(apiToken: String = "", onUnAuthorized) {
+    this.apiToken = apiToken;
+    this.onUnAuthorized = onUnAuthorized;
+  }
+  call({ request, data, callback }) {
+    switch (request) {
+      case "signin":
+        this.signinCall(data, callback);
+        break;
+      case "signup":
+        break;
+      case "whois":
+        this.getMe(data, callback);
+        break;
+      case "googleSignIn":
+        this.signinSsoCall(data, callback);
+        break;
+      default:
+    }
+  }
+
+  signinCall(body, callback: ApiResult) {
     const LOGIN_API = "/user/signin";
-    call(LOGIN_API, "POST", body, callback);
+    this.exec(LOGIN_API, "POST", body, {
+      onSuccess: (json) => {
+        this.apiToken = json.data.token;
+        console.log("new api token:" + this.apiToken);
+        callback.onSuccess(json);
+      },
+      onFailure: (json) => {
+        callback.onFailure(json);
+      },
+    });
   }
 
-  function signinSsoCall(body, callback: ApiResult) {
+  signinSsoCall(body, callback: ApiResult) {
     const targetApi = "/user/signin_sso";
-    call(targetApi, "POST", body, callback);
+    this.exec(targetApi, "POST", body, {
+      onSuccess: (json) => {
+        this.apiToken = json.data.token;
+        console.log("new api token:" + this.apiToken);
+        callback.onSuccess(json);
+      },
+      onFailure: (json) => {
+        callback.onFailure(json);
+      },
+    });
   }
 
-  function call(
+  getMe(body, callback: ApiResult) {
+    const targetApi = "/device/whois";
+    this.exec(targetApi, "GET", body, callback);
+  }
+
+  exec(
     api,
     method,
-    body,
+    body = null,
     callback: ApiResult,
-    headers = generateHeasers()
+    headers = this.generateHeasers()
   ) {
     let finalUrl = `${BASE_URL_LOCAL}${API_VERSION}${api}`;
 
@@ -44,15 +90,23 @@ const MainApi: FunctionComponent<MainApiProps> = ({
       )})\nBody${JSON.stringify(body)} `
     );
 
-    const response = fetch(finalUrl, {
+    const request = {
       method: method,
       headers: headers,
       body: JSON.stringify(body),
-    })
+    };
+    if (method === "GET" || method === "HEAD") {
+      delete request.body;
+    }
+
+    const response = fetch(finalUrl, request)
       .then((response) => response.json())
       .then((json) => {
         console.log(json);
-        if (json.error) {
+        if (json.error || json.statusCode !== 200) {
+          if (json.statusCode === 4013) {
+            this.onUnAuthorized();
+          }
           callback.onFailure(json);
         } else {
           callback.onSuccess(json);
@@ -72,7 +126,7 @@ const MainApi: FunctionComponent<MainApiProps> = ({
       });
   }
 
-  function generateHeasers() {
+  generateHeasers() {
     const appVersion = Constants.manifest.version;
     const deviceRegion = Localization.locale;
     const deviceModel = Device?.modelName ?? "model not available";
@@ -90,23 +144,11 @@ const MainApi: FunctionComponent<MainApiProps> = ({
       os: Platform.OS,
       "Device-Platform-Version": Device?.osVersion ?? "version not available",
       "Device-Model": deviceModel,
-      "api-key": apiToken,
+      "api-key": this.apiToken,
     };
 
     return headers;
   }
-
-  switch (request) {
-    case "signin":
-      signinCall(data, callback);
-      break;
-    case "signup":
-      break;
-    case "googleSignIn":
-      signinSsoCall(data, callback);
-      break;
-    default:
-  }
-};
+}
 
 export default MainApi;

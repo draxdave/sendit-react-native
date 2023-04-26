@@ -1,10 +1,11 @@
-export const IS_LOGGED_IN = "IS_LOGGED_IN";
+export const USER_INFO = "USER_INFO";
 export const API_TOKEN = "API_TOKEN";
 
-export const LoggedInAction = (isLoggedIn) => ({
-  type: IS_LOGGED_IN,
+export const LoggedInAction = (user, device) => ({
+  type: USER_INFO,
   payload: {
-    isLoggedIn,
+    user,
+    device,
   },
 });
 

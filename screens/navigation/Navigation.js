@@ -9,8 +9,10 @@ import { useSelector } from "react-redux";
 const Stack = createNativeStackNavigator();
 
 const NavComponent = () => {
-  const isLoggedIn = useSelector((state) => state.loggedIn);
-
+  const user = useSelector((state) => state.user);
+  const device = useSelector((state) => state.device);
+  console.log(user);
+  
   return (
     <NavigationContainer>
       <Stack.Navigator
@@ -18,10 +20,10 @@ const NavComponent = () => {
           headerShown: false,
         }}
       >
-        {isLoggedIn ? (
-          <Stack.Screen name="Home" component={HomeScreen} />
-        ) : (
+        {user == null || device == null ? (
           <Stack.Screen name="Login" component={LoginScreen} />
+        ) : (
+          <Stack.Screen name="Home" component={HomeScreen} />
         )}
       </Stack.Navigator>
     </NavigationContainer>

@@ -1,17 +1,20 @@
-import { IS_LOGGED_IN, API_TOKEN } from "./LoginAction";
+import { USER_INFO, API_TOKEN } from "./LoginAction";
 
 
 const initialState = {
-  loggedIn: false
+  user: null,
+  device: null,
+  apiToken: null
 };
 
 const LoginReducer = (state = initialState, action) => {
   switch (action.type) {
-    case IS_LOGGED_IN: {
-      const { isLoggedIn } = action.payload
+    case USER_INFO: {
+      const { user, device } = action.payload
       return {
         ...state,
-        loggedIn: isLoggedIn
+        user: user,
+        device: device,
       };
     }
     case API_TOKEN: {

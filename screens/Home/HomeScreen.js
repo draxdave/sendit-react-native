@@ -6,7 +6,7 @@ import { createMaterialBottomTabNavigator } from "@react-navigation/material-bot
 const Tab = createMaterialBottomTabNavigator();
 const HomeScreen = () => {
   return (
-    <Tab.Navigator initialRouteName="Messages">
+    <Tab.Navigator initialRouteName="Connections">
       <Tab.Screen
         name="Connections"
         component={ConnectionsScreen}

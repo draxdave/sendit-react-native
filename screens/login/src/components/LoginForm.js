@@ -41,9 +41,8 @@ const LoginFormComponent = ({ setLoading, networkApi }) => {
   const [instanceId, setInstanceId] = useState("");
   const dispatch = useDispatch();
 
-  const handleLoggedIn = (token) => {
-    dispatch(ApiTokenAction(token));
-    dispatch(LoggedInAction(true));
+  const handleLoggedIn = (token, user) => {
+    dispatch(LoggedInAction(user));
   };
 
   const handleGoogleSignIn = async () => {
@@ -100,7 +99,6 @@ const LoginFormComponent = ({ setLoading, networkApi }) => {
   };
 
   const trySSO = (email, idToken) => {
-    console.log(username, password);
     let data = {
       id_token: idToken,
       email: email,
@@ -111,7 +109,8 @@ const LoginFormComponent = ({ setLoading, networkApi }) => {
       onSuccess: (response) => {
         let token = response.data.token;
         setLoading(false);
-        handleLoggedIn(token);
+        dispatch(ApiTokenAction(token));
+        getDeviceInfo();
       },
       onFailure: (error) => {
         console.log(error);
@@ -132,7 +131,6 @@ const LoginFormComponent = ({ setLoading, networkApi }) => {
 
   const tryLogin = () => {
     setLoading(true);
-    console.log(username, password);
     let data = {
       email: username,
       device_id: md5("yourOtherValue"),
@@ -143,7 +141,8 @@ const LoginFormComponent = ({ setLoading, networkApi }) => {
       onSuccess: (response) => {
         let token = response.data.token;
         setLoading(false);
-        handleLoggedIn(token);
+        dispatch(ApiTokenAction(token));
+        getDeviceInfo();
       },
       onFailure: (error) => {
         console.log(error);
@@ -157,6 +156,33 @@ const LoginFormComponent = ({ setLoading, networkApi }) => {
 
     networkApi.call({
       request: "signin",
+      data: data,
+      callback: callback,
+    });
+  };
+
+  const getDeviceInfo = () => {
+    setLoading(true);
+    let data = {};
+    let callback = {
+      onSuccess: (response) => {
+        let user = response.data.user;
+        let device = response.data.device;
+        setLoading(false);
+        dispatch(LoggedInAction(user, device));
+      },
+      onFailure: (error) => {
+        console.log(error);
+        setLoading(false);
+
+        let message = error.error?.description ?? "Unknown Error";
+
+        setMessage(message);
+      },
+    };
+
+    networkApi.call({
+      request: "whois",
       data: data,
       callback: callback,
     });
