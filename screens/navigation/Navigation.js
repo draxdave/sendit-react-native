@@ -8,6 +8,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { UpdateMessages } from "../../src/storage/redux/CoreAction";
 import messaging from "@react-native-firebase/messaging";
 import { OP_NEW_CONTENT } from "../../src/components/Push/Config";
+import ScannerScreen from "../Scanner/ScannerScreen";
 
 const Stack = createNativeStackNavigator();
 
@@ -45,12 +46,15 @@ const NavComponent = () => {
         screenOptions={{
           headerShown: false,
         }}
+        initialRouteName="Scanner"
       >
         {user == null || device == null ? (
           <Stack.Screen name="Login" component={LoginScreen} />
         ) : (
           <Stack.Screen name="Home" component={HomeScreen} />
         )}
+
+        <Stack.Screen name="Scanner" component={ScannerScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );
