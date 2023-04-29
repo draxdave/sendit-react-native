@@ -1,9 +1,10 @@
 import React, { Component } from "react";
-import { Button, Text, View } from "react-native";
+import { Button, Image, Text, View } from "react-native";
 import { RNCamera } from "react-native-camera";
+import SText from "../../src/components/SText";
+import ScannerForground from "./assets/images/ScannerForground";
 
 class ProductScanRNCamera extends Component {
-
   constructor(props) {
     super(props);
     this.onNewQrcode = props.onNewQrcode;
@@ -17,15 +18,12 @@ class ProductScanRNCamera extends Component {
       },
     };
   }
-  
+
   onBarCodeRead(scanResult) {
-    // console.warn(scanResult.type);
-    // console.warn(scanResult.data);
     if (scanResult.data != null) {
       if (!this.barcodeCodes.includes(scanResult.data)) {
         this.props.onNewQrcode(scanResult.data);
         this.barcodeCodes.push(scanResult.data);
-        console.warn("onBarCodeRead call");
       }
     }
     return;
@@ -74,13 +72,17 @@ class ProductScanRNCamera extends Component {
           style={styles.preview}
           type={this.state.camera.type}
         />
-        <View style={[styles.overlay, styles.topOverlay]}>
-          <Text style={styles.scanScreenMessage}>
-            Please hold the camera in front of your other device QR code.
-          </Text>
-          <Text style={styles.scanScreenMessage}>
-            Pairing process will begin automatically.
-          </Text>
+        <View style={styles.overlay}>
+          <ScannerForground />
+
+          <View>
+            <SText textType="body" style={styles.scanScreenMessage}>
+              Please hold the camera in front of your other device QR code.
+            </SText>
+            <SText textType="body" style={styles.scanScreenMessage}>
+              Pairing process will begin automatically.
+            </SText>
+          </View>
         </View>
       </View>
     );
@@ -98,30 +100,13 @@ const styles = {
   },
   overlay: {
     position: "absolute",
-    padding: 16,
-    right: 0,
-    left: 0,
-    alignItems: "center",
-  },
-  topOverlay: {
-    top: 0,
-    flex: 1,
-    flexDirection: "column",
-    justifyContent: "space-between",
-    alignItems: "center",
-  },
-  bottomOverlay: {
-    bottom: 0,
-    backgroundColor: "rgba(0,0,0,0.4)",
-    flexDirection: "row",
+    height: "100%",
     justifyContent: "center",
     alignItems: "center",
+    flexDirection: "column",
   },
-  enterBarcodeManualButton: {
-    padding: 15,
-    backgroundColor: "white",
-    borderRadius: 40,
-  },
+  
+  
   scanScreenMessage: {
     fontSize: 14,
     margin: 16,

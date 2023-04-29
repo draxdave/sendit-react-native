@@ -46,7 +46,6 @@ const NavComponent = () => {
         screenOptions={{
           headerShown: false,
         }}
-        initialRouteName="Scanner"
       >
         {user == null || device == null ? (
           <Stack.Screen name="Login" component={LoginScreen} />
