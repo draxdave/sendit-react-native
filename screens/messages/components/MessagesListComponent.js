@@ -17,48 +17,9 @@ import MessageComponent from "./MessageComponent";
 export default MessagesListComponent = ({ networkApi }) => {
   const dispatch = useDispatch();
   const connections = useSelector((state) => state.CoreReducer.connections);
-  // const messages = useSelector((state) => state.CoreReducer.messages);
-  const messages = [
-    {
-      id: 1,
-      broadcaster_id: 2,
-      connection_id: 7,
-      send_date: 1678592584,
-      deliver_date: null,
-      content: "RESOURCE_NOT_FOUND",
-      status: 200,
-      last_update: 1678592584,
-      meta: {},
-      content_type: 100,
-      type: 200,
-    },
-    {
-      id: 2,
-      broadcaster_id: 2,
-      connection_id: 7,
-      send_date: 1678592584,
-      deliver_date: null,
-      content: "RESOURCE_NOT_FOUND",
-      status: 200,
-      last_update: 1678592584,
-      meta: {},
-      content_type: 100,
-      type: 200,
-    },
-    {
-      id: 3,
-      broadcaster_id: 2,
-      connection_id: 7,
-      send_date: 1678592584,
-      deliver_date: null,
-      content: "RESOURCE_NOT_FOUND Some s skdjskldjsj dj kldjsn dsnk dskn aksdnksan \n dnaskn. sdsl dsmlsldm lmlsmsd;m lmdslm.",
-      status: 200,
-      last_update: 1678592584,
-      meta: {},
-      content_type: 100,
-      type: 200,
-    },
-  ];
+  const messages = useSelector((state) => state.CoreReducer.messages);
+
+  console.log("messages", messages);
 
   return messages.length > 0 ? (
     <FlatList

@@ -8,7 +8,7 @@ import QRScreen from "../QR/QRScreen";
 const Tab = createMaterialBottomTabNavigator();
 const HomeScreen = () => {
   return (
-    <Tab.Navigator initialRouteName="QR">
+    <Tab.Navigator initialRouteName="Messages">
       <Tab.Screen
         name="QR"
         component={QRScreen}

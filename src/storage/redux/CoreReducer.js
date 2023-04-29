@@ -20,10 +20,10 @@ const CoreReducer = (state = initialState, action) => {
       };
     }
     case MESSAGES_UPDATE: {
-      const { messages } = action.payload;
+      const { message } = action.payload;
       return {
         ...state,
-        messages: messages,
+        messages: [...state.messages, message],
       };
     }
     case QR_URL_UPDATE: {

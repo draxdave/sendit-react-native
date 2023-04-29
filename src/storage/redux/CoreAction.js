@@ -10,10 +10,10 @@ export const UpdateConnections = (connections) => ({
   },
 });
 
-export const UpdateMessages = (messages) => ({
+export const UpdateMessages = (message) => ({
   type: MESSAGES_UPDATE,
   payload: {
-    messages,
+    message,
   },
 });
 

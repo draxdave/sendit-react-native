@@ -1,18 +1,15 @@
-import { View, Text, SafeAreaView, StyleSheet } from "react-native";
+import { View, Text, SafeAreaView, StyleSheet, Alert } from "react-native";
 import { useDispatch } from "react-redux";
 import { LoggedInAction } from "../../src/storage/redux/LoginAction";
 import NetworkApiComponent from "../../src/components/network/NetworkApiComponent";
 import MessagesListComponent from "./components/MessagesListComponent";
+import { useEffect } from "react";
+import { OP_NEW_CONTENT } from "../../src/components/Push/Config";
+import { UpdateMessages } from "../../src/storage/redux/CoreAction";
 
 
 const MessagesScreen = ({ navigation }) => {
-
-  const dispatch = useDispatch()
-
-  const handleLoggedOut = () => {
-    dispatch(LoggedInAction(false));
-  }
-
+  
   return (
     <NetworkApiComponent>
       <SafeAreaView>
