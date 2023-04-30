@@ -51,7 +51,7 @@ export default ProfileComponent = ({ networkApi }) => {
 
   return (
     <View style={styles.container}>
-      <AppIcon style={styles.appIcon} />
+      <AppIcon style={styles.appIcon} bw={true} />
       <Pressable
         onPress={handleLogout}
         style={styles.moreButton}
@@ -96,7 +96,6 @@ const styles = StyleSheet.create({
     width: 200,
     height: 200,
     opacity: 0.5,
-    tintColor: "#aaa",
   },
   headerText: {
     color: "#444",
