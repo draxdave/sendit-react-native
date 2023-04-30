@@ -2,7 +2,7 @@ import { View, Text, SafeAreaView, StyleSheet } from "react-native";
 import { useDispatch } from "react-redux";
 import NetworkApiComponent from "../../src/components/network/NetworkApiComponent";
 import { useState } from "react";
-import ProductScanRNCamera from "./ProductScanRNCamera";
+import PairingCodeScanner from "./components/PairingCodeScanner";
 import BackArrowCurved from "./assets/images/BackArrowCurved";
 
 const ScannerScreen = ({ navigation }) => {
@@ -11,6 +11,10 @@ const ScannerScreen = ({ navigation }) => {
   if (barcode !== "") {
     // Navigate back
     console.log(` Barcode is here ${barcode}`);
+    navigation.navigate("Home",{
+      screen: "QR",
+      params: { qrCode: barcode },
+    });
   }
 
   const validateQrcode = (barcode) => {
@@ -22,7 +26,7 @@ const ScannerScreen = ({ navigation }) => {
   return (
     <SafeAreaView>
       <View style={styles.container}>
-        <ProductScanRNCamera
+        <PairingCodeScanner
           onNewQrcode={(qrCode) => validateQrcode(qrCode)}
         />
         <BackArrowCurved style={styles.backArrow} />

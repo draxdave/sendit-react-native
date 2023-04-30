@@ -1,4 +1,10 @@
-import { Image, Pressable, StyleSheet, View } from "react-native";
+import {
+  Image,
+  PermissionsAndroid,
+  Pressable,
+  StyleSheet,
+  View,
+} from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 import LoadingComponent from "../../../src/components/LoadingComponent";
 import { useEffect, useState } from "react";
@@ -9,12 +15,42 @@ import SText from "../../../src/components/SText";
 import QrCodeIcon from "../assets/images/QrCodeIcon";
 import ScanIcon from "../assets/images/ScanIcon";
 
-export default QRDisplayComponent = ({ networkApi }) => {
-  const [loading, setLoading] = useState(false);
+export default QRDisplayComponent = ({
+  networkApi,
+  openScanner,
+  setLoading,
+}) => {
   const dispatch = useDispatch();
   const [hasPermission, setHasPermission] = useState(false);
-
   const qrCodeUrl = useSelector((state) => state.CoreReducer.qrCodeUrl);
+
+  const requestCameraPermission = async () => {
+    try {
+      const granted = await PermissionsAndroid.requestMultiple(
+        [
+          PermissionsAndroid.PERMISSIONS.CAMERA,
+          PermissionsAndroid.PERMISSIONS.RECORD_AUDIO,
+        ],
+        {
+          title: "Cool Photo App Camera Permission",
+          message:
+            "Cool Photo App needs access to your camera " +
+            "so you can take awesome pictures.",
+          buttonNeutral: "Ask Me Later",
+          buttonNegative: "Cancel",
+          buttonPositive: "OK",
+        }
+      );
+      if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+        console.log("You can use the camera");
+        openScanner();
+      } else {
+        console.log("Camera permission denied");
+      }
+    } catch (err) {
+      console.warn(err);
+    }
+  };
 
   const fetchQrUrl = () => {
     setLoading(true);
@@ -43,9 +79,17 @@ export default QRDisplayComponent = ({ networkApi }) => {
 
   const handleScanQrClick = () => {
     (async () => {
-      const status = await Camera.requestCameraPermission();
-      if (status === "authorized") {
+      const statusCamera = await PermissionsAndroid.check(
+        PermissionsAndroid.PERMISSIONS.CAMERA
+      );
+      const statusAudio = await PermissionsAndroid.check(
+        PermissionsAndroid.PERMISSIONS.RECORD_AUDIO
+      );
+      if (statusCamera && statusAudio) {
         setHasPermission(true);
+        openScanner();
+      } else {
+        requestCameraPermission();
       }
     })();
   };
@@ -79,6 +123,7 @@ export default QRDisplayComponent = ({ networkApi }) => {
 
       <View style={styles.scanBtnContainer}>
         <Pressable
+          onPress={handleScanQrClick}
           android_ripple={{ color: "#9f9" }}
           style={styles.scanBtnPressable}
         >
@@ -86,13 +131,6 @@ export default QRDisplayComponent = ({ networkApi }) => {
           <SText style={styles.scanBtnText}>Scan</SText>
         </Pressable>
       </View>
-
-      <LoadingComponent
-        isLoading={loading}
-        onRequestClose={() => {
-          setLoading(false);
-        }}
-      />
     </View>
   );
 };

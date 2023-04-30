@@ -13,7 +13,8 @@ type MainApiProps = {
     | "whois"
     | "signout"
     | "getConnections"
-    | "getQr",
+    | "getQr"
+    | "pairDevice" ,
   callback: ApiResult,
   data: any,
 };
@@ -51,6 +52,9 @@ class MainApi implements MainApiInterface {
       case "getQr":
         this.getQRUrl(data, callback);
         break;
+      case "pairDevice":
+        this.pairDevice(data, callback);
+        break;
       case "signout":
         this.signout(data, callback);
         break;
@@ -84,6 +88,11 @@ class MainApi implements MainApiInterface {
         callback.onFailure(json);
       },
     });
+  }
+
+  pairDevice(body, callback: ApiResult) {
+    const targetApi = "/device/pair";
+    this.exec(targetApi, "POST", body, callback);
   }
 
   getMe(body, callback: ApiResult) {

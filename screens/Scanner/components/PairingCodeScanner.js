@@ -1,10 +1,10 @@
 import React, { Component } from "react";
 import { Button, Image, Text, View } from "react-native";
 import { RNCamera } from "react-native-camera";
-import SText from "../../src/components/SText";
-import ScannerForground from "./assets/images/ScannerForground";
+import SText from "../../../src/components/SText";
+import ScannerForground from "../assets/images/ScannerForground";
 
-class ProductScanRNCamera extends Component {
+class PairingCodeScanner extends Component {
   constructor(props) {
     super(props);
     this.onNewQrcode = props.onNewQrcode;
@@ -65,10 +65,6 @@ class ProductScanRNCamera extends Component {
           onBarCodeRead={this.onBarCodeRead.bind(this)}
           onFocusChanged={() => {}}
           onZoomChanged={() => {}}
-          permissionDialogTitle={"Permission to use camera"}
-          permissionDialogMessage={
-            "We need your permission to use your camera phone to scan the QR code."
-          }
           style={styles.preview}
           type={this.state.camera.type}
         />
@@ -105,8 +101,7 @@ const styles = {
     alignItems: "center",
     flexDirection: "column",
   },
-  
-  
+
   scanScreenMessage: {
     fontSize: 14,
     margin: 16,
@@ -117,4 +112,4 @@ const styles = {
   },
 };
 
-export default ProductScanRNCamera;
+export default PairingCodeScanner;
