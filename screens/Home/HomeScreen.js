@@ -4,10 +4,11 @@ import ConnectionsScreen from "../connections/ConnectionsScreen";
 import { createMaterialBottomTabNavigator } from "@react-navigation/material-bottom-tabs";
 import { StatusBar } from "react-native";
 import QRScreen from "../QR/QRScreen";
+import ShareModal from "../Share/ShareModal";
 
 const Tab = createMaterialBottomTabNavigator();
 const HomeScreen = () => {
-  return (
+  return (<>
     <Tab.Navigator initialRouteName="Messages">
       <Tab.Screen
         name="QR"
@@ -49,6 +50,8 @@ const HomeScreen = () => {
         }}
       />
     </Tab.Navigator>
+    <ShareModal />
+    </>
   );
 };
 export default HomeScreen;

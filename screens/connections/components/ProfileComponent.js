@@ -55,9 +55,10 @@ export default ProfileComponent = ({ networkApi }) => {
       <Pressable
         onPress={handleLogout}
         style={styles.moreButton}
-        android_ripple={{ color: "#fff" }}
+        android_ripple={{ color: "#aaa" }}
       >
-        <MoreIcon />
+        <SText style={styles.logout}>Logout</SText>
+        {/* <MoreIcon /> */}
       </Pressable>
       <View style={styles.headerTextContainer}>
         <View style={styles.headerTextRow}>
@@ -75,6 +76,13 @@ export default ProfileComponent = ({ networkApi }) => {
 };
 
 const styles = StyleSheet.create({
+  logout: {
+    color: "#333",
+    paddingHorizontal:8,
+    paddingVertical: 4,
+    borderColor: "#333",
+    borderWidth: 1,
+  },
   moreButton: {
     position: "absolute",
     padding: 8,
@@ -87,14 +95,15 @@ const styles = StyleSheet.create({
     right: 0,
     width: 200,
     height: 200,
-    opacity: 0.9,
+    opacity: 0.5,
+    tintColor: "#aaa",
   },
   headerText: {
-    color: "white",
+    color: "#444",
     marginStart: 4,
   },
   headerSubText: {
-    color: "#aaa",
+    color: "#888",
     paddingVertical: 4,
     marginStart: 27,
   },
@@ -109,6 +118,6 @@ const styles = StyleSheet.create({
   },
   container: {
     height: 250,
-    backgroundColor: "#291563",
+    backgroundColor: "#eaf4f0",
   },
 });

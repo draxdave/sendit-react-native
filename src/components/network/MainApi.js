@@ -14,6 +14,7 @@ type MainApiProps = {
     | "signout"
     | "getConnections"
     | "getQr"
+    | "share"
     | "pairDevice" ,
   callback: ApiResult,
   data: any,
@@ -51,6 +52,9 @@ class MainApi implements MainApiInterface {
         break;
       case "getQr":
         this.getQRUrl(data, callback);
+        break;
+      case "share":
+        this.share(data, callback);
         break;
       case "pairDevice":
         this.pairDevice(data, callback);
@@ -92,6 +96,11 @@ class MainApi implements MainApiInterface {
 
   pairDevice(body, callback: ApiResult) {
     const targetApi = "/device/pair";
+    this.exec(targetApi, "POST", body, callback);
+  }
+
+  share(body, callback: ApiResult) {
+    const targetApi = "/share";
     this.exec(targetApi, "POST", body, callback);
   }
 

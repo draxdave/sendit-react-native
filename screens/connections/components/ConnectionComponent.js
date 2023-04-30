@@ -9,7 +9,7 @@ export default ConnectionComponent = ({ connection }) => {
 
   return (
     <Card style={styles.card} elevation={7}>
-      <Pressable android_ripple={{ color: "##5dff5c" }}>
+      <Pressable android_ripple={{ color: "#444" }}>
         <View style={{ flexDirection: "column" }}>
           <Image
             style={styles.connectionThumb}
@@ -52,7 +52,7 @@ const styles = StyleSheet.create({
     width: "48%",
   },
   connectionThumb: {
-    backgroundColor: "black",
+    tintColor: "#304333",
     width: "100%",
     height: undefined,
     aspectRatio: 1,
