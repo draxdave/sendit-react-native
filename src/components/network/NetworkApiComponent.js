@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import MainApi from "./MainApi";
 import { LoggedInAction } from "../../storage/redux/LoginAction";
 
-const NetworkApiComponent = ({ children }) => {
+const NetworkApiComponent = ({ children, innerRef }) => {
   const apiToken = useSelector((state) => state.LoginReducer.apiToken);
   const dispatch = useDispatch();
 
@@ -13,7 +13,9 @@ const NetworkApiComponent = ({ children }) => {
   };
 
   const networkApiObject = new MainApi(apiToken, handleUnAuthorized);
-
+  if (innerRef) {
+    innerRef(networkApiObject);
+  }
   const addNetworkApi = (children) => {
     return Children.map(children, (child) => {
       if (!isValidElement(child)) return null;

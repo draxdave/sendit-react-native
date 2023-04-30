@@ -1,4 +1,5 @@
 import {
+  ActivityIndicator,
   Image,
   PermissionsAndroid,
   Pressable,
@@ -18,7 +19,6 @@ import ScanIcon from "../assets/images/ScanIcon";
 export default QRDisplayComponent = ({
   networkApi,
   openScanner,
-  setLoading,
 }) => {
   const dispatch = useDispatch();
   const [hasPermission, setHasPermission] = useState(false);
@@ -53,15 +53,12 @@ export default QRDisplayComponent = ({
   };
 
   const fetchQrUrl = () => {
-    setLoading(true);
     let data = {};
     let callback = {
       onSuccess: (response) => {
         dispatch(UpdateQRUrl(`${SERVER_ADDRESS}${response.data.qr_url}`));
       },
-      onFailure: (error) => {
-        setLoading(false);
-      },
+      onFailure: (error) => {},
     };
 
     networkApi.call({
@@ -98,15 +95,18 @@ export default QRDisplayComponent = ({
     <View style={styles.container}>
       <View borderRadius={6} style={styles.smallBgIcon}>
         <QrCodeIcon width="96" height="96" />
+        <ActivityIndicator
+          size="large"
+          color="#59b063"
+
+          style={styles.qrIndicator}
+        />
       </View>
       <Card elevation={7} style={styles.card}>
         <Image
           style={styles.qrCodeImage}
           resizeMode="contain"
           source={{ uri: qrCodeUrl }}
-          onLoad={() => {
-            setLoading(false);
-          }}
           defaultSource={require("../../../assets/icon.png")}
         />
       </Card>
@@ -136,6 +136,11 @@ export default QRDisplayComponent = ({
 };
 
 const styles = StyleSheet.create({
+  qrIndicator:{
+    position: "absolute",
+    alignSelf: "center",
+    transform: [{ scaleX: 4 }, { scaleY: 4 }],
+  },
   scanBtnText: {
     color: "white",
     fontSize: 23,
@@ -167,6 +172,7 @@ const styles = StyleSheet.create({
     marginTop: 128,
     position: "absolute",
     overflow: "hidden",
+    justifyContent: "center",
   },
   card: {
     padding: 8,

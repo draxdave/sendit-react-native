@@ -1,35 +1,36 @@
 import { View, Text, SafeAreaView, StyleSheet } from "react-native";
 import { useDispatch } from "react-redux";
 import NetworkApiComponent from "../../src/components/network/NetworkApiComponent";
-import { useState } from "react";
-import PairingCodeScanner from "./components/PairingCodeScanner";
+import { useEffect, useState } from "react";
+import PairingCodeScanner from "./components/PairingCodeScannerComponent";
 import BackArrowCurved from "./assets/images/BackArrowCurved";
 
 const ScannerScreen = ({ navigation }) => {
-  const [barcode, setBarcode] = useState("");
+  let gotBarcode = false;
 
-  if (barcode !== "") {
-    // Navigate back
-    console.log(` Barcode is here ${barcode}`);
-    navigation.navigate("Home",{
-      screen: "QR",
-      params: { qrCode: barcode },
-    });
-  }
-
-  const validateQrcode = (barcode) => {
-    if (barcode.split("::").length === 2) {
-      setBarcode(barcode);
+  const validateQrcode = (newCode) => {
+    if (newCode.split("::").length === 2) {
+      if (!gotBarcode) {
+        gotBarcode = true;
+        // Navigate back
+        console.log(` Barcode is here ${newCode}`);
+        navigation.navigate("Home", {
+          screen: "QR",
+          params: { qrCode: newCode },
+          merge: true,
+        });
+      }
     }
+  };
+  const backClicked = () => {
+    navigation.goBack();
   };
 
   return (
     <SafeAreaView>
       <View style={styles.container}>
-        <PairingCodeScanner
-          onNewQrcode={(qrCode) => validateQrcode(qrCode)}
-        />
-        <BackArrowCurved style={styles.backArrow} />
+        <PairingCodeScanner onNewQrcode={(qrCode) => validateQrcode(qrCode)} />
+        <BackArrowCurved style={styles.backArrow} onPress={backClicked} />
       </View>
     </SafeAreaView>
   );
