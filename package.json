@@ -30,6 +30,7 @@
     "i18next": "^22.4.14",
     "material-ui-community-icons": "^0.15.0",
     "md5": "^2.3.0",
+    "patch-package": "^7.0.0",
     "react": "18.2.0",
     "react-i18next": "^12.2.0",
     "react-native": "0.71.6",

@@ -1,6 +1,7 @@
 import {
   Alert,
   FlatList,
+  ImageBackground,
   Pressable,
   RefreshControl,
   ScrollView,
@@ -13,6 +14,7 @@ import { TouchableRipple } from "react-native-paper";
 import { useDispatch, useSelector } from "react-redux";
 import MessageIcon from "../assets/images/MessageIcon";
 import MessageComponent from "./MessageComponent";
+import { SERVER_ADDRESS } from "../../../config";
 
 export default MessagesListComponent = ({ networkApi }) => {
   const dispatch = useDispatch();
@@ -21,18 +23,24 @@ export default MessagesListComponent = ({ networkApi }) => {
 
   console.log("messages", messages);
 
-  return messages.length > 0 ? (
-    <FlatList
-      inverted={true}
-      data={messages}
-      renderItem={({ item }) => <MessageComponent message={item} />}
-      keyExtractor={(item, index) => item.id}
-    />
-  ) : (
-    <View style={styles.emptyContainer}>
-      <SText textType="secondary">No messages yet. Send one now!</SText>
-      <MessageIcon style={styles.emptyIcon} />
-    </View>
+  const wallpaper = `${SERVER_ADDRESS}/img/chat_background_02.jpg`;
+
+  return (
+    <ImageBackground source={{ uri: wallpaper }} resizeMode="cover" style={styles.container}>
+      {messages.length > 0 ? (
+        <FlatList
+          inverted={true}
+          data={messages}
+          renderItem={({ item }) => <MessageComponent message={item} />}
+          keyExtractor={(item, index) => item.id}
+        />
+      ) : (
+        <View style={styles.emptyContainer}>
+          <SText textType="secondary">No messages yet. Send one now!</SText>
+          <MessageIcon style={styles.emptyIcon} />
+        </View>
+      )}
+    </ImageBackground>
   );
 };
 
@@ -41,8 +49,7 @@ const styles = StyleSheet.create({
     marginTop: 16,
   },
   container: {
-    backgroundColor: "#33ff00",
-    paddingBottom: 100,
+    height: "100%",
   },
   emptyContainer: {
     flexDirection: "column",
