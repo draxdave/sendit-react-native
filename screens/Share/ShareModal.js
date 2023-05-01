@@ -30,16 +30,15 @@ export default ShareModal = ({ networkApi }) => {
   useEffect(() => {
     DeviceEventEmitter.addListener("broadcaster-data-received", (data) => {
       const event = data["event"];
-      if (event === "newSharedText"){
+      if (event === "newSharedText") {
         const text = data["text"];
         console.log("New text to share received: ", text);
-
       }
     });
   }, []);
-  
-  if(textToShare){
-    setModalVisible(true)
+
+  if (textToShare) {
+    setModalVisible(true);
   }
 
   return (
@@ -62,11 +61,13 @@ export default ShareModal = ({ networkApi }) => {
               <SText style={styles.subHeader} textType="body">
                 Select a connection to share the content with.
               </SText>
-              <MessageComponent message={{
-                send_date: new Date().toISOString(),
-                content: textToShare,
-                
-              }} />
+              <MessageComponent
+                message={{
+                  send_date: new Date().toISOString(),
+                  content: textToShare,
+                  senderName: "",
+                }}
+              />
               <Pressable
                 onPress={() => {
                   setModalVisible(false);

@@ -83,7 +83,6 @@ handleNewIntent(getIntent(), 5000);
 
   private void handleNewIntent(Intent intent, int withDelay) {
     try {
-      Toast.makeText(this, "handleNewIntent", Toast.LENGTH_SHORT).show();
       if (
               Objects.equals(intent.getAction(), Intent.ACTION_SEND) &&
                       intent.getType().startsWith("text/")
@@ -100,9 +99,7 @@ handleNewIntent(getIntent(), 5000);
         }else {
           new Handler().postDelayed(() -> {
             if (!isFinishing() && !isDestroyed()) {
-              Toast.makeText(this, text, Toast.LENGTH_SHORT).show();
               MyModule.onEventReceived(this, i);
-//              sendBroadcast(i);
             }
           }, withDelay);
         }
