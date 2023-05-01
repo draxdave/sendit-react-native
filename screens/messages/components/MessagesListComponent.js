@@ -22,13 +22,25 @@ export default MessagesListComponent = ({ networkApi }) => {
   const messages = useSelector((state) => state.CoreReducer.messages);
 
   const wallpaper = `${SERVER_ADDRESS}/img/chat_background_02.jpg`;
+  console.log(messages);
+  console.log(connections);
 
   return (
-    <ImageBackground source={{ uri: wallpaper }} resizeMode="cover" style={styles.container}>
+    <ImageBackground
+      source={{ uri: wallpaper }}
+      resizeMode="cover"
+      style={styles.container}
+    >
       {messages.length > 0 ? (
         <FlatList
           inverted={true}
-          data={messages}
+          data={messages.map((item) => {
+            const sender = connections.find(
+              (connection) => item.connection_id === connection.id
+            );
+            item.senderName = sender?.name ?? "Unavailable User";
+            return item;
+          })}
           renderItem={({ item }) => <MessageComponent message={item} />}
           keyExtractor={(item, index) => item.id}
         />

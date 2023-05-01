@@ -1,23 +1,31 @@
 package app.siamak.sendit;
 
+import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 
+import android.os.Handler;
+import android.util.Log;
+import android.widget.Toast;
 import com.facebook.react.ReactActivity;
 import com.facebook.react.ReactActivityDelegate;
+import com.facebook.react.bridge.WritableNativeMap;
 import com.facebook.react.defaults.DefaultNewArchitectureEntryPoint;
 import com.facebook.react.defaults.DefaultReactActivityDelegate;
 
 import expo.modules.ReactActivityDelegateWrapper;
+import java.util.Objects;
 
 public class MainActivity extends ReactActivity {
   @Override
   protected void onCreate(Bundle savedInstanceState) {
-    // Set the theme to AppTheme BEFORE onCreate to support 
+//    handleNewIntent(getIntent(), 1000);
+    // Set the theme to AppTheme BEFORE onCreate to support
     // coloring the background, status bar, and navigation bar.
     // This is required for expo-splash-screen.
     setTheme(R.style.AppTheme);
     super.onCreate(null);
+handleNewIntent(getIntent(), 5000);
   }
 
   /**
@@ -64,5 +72,43 @@ public class MainActivity extends ReactActivity {
     // Use the default back button implementation on Android S
     // because it's doing more than {@link Activity#moveTaskToBack} in fact.
     super.invokeDefaultOnBackPressed();
+  }
+
+  @Override
+  public void onNewIntent(Intent intent) {
+    Log.e("handleNewIntent", "New Intent " + intent.getAction());
+    handleNewIntent(intent, 0);
+    super.onNewIntent(intent);
+  }
+
+  private void handleNewIntent(Intent intent, int withDelay) {
+    try {
+      Toast.makeText(this, "handleNewIntent", Toast.LENGTH_SHORT).show();
+      if (
+              Objects.equals(intent.getAction(), Intent.ACTION_SEND) &&
+                      intent.getType().startsWith("text/")
+      ) {
+        String text = intent.getStringExtra(Intent.EXTRA_TEXT);
+
+        Intent i = new Intent();
+        i.setAction("senditAction");
+        i.putExtra("event", "newSharedText");
+        i.putExtra("text", text);
+
+        if (withDelay == 0){
+          sendBroadcast(i);
+        }else {
+          new Handler().postDelayed(() -> {
+            if (!isFinishing() && !isDestroyed()) {
+              Toast.makeText(this, text, Toast.LENGTH_SHORT).show();
+              MyModule.onEventReceived(this, i);
+//              sendBroadcast(i);
+            }
+          }, withDelay);
+        }
+      }
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
   }
 }

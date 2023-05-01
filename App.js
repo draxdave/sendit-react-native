@@ -6,10 +6,13 @@ import { PersistGate } from "redux-persist/integration/react";
 import SText from "./src/components/SText";
 import { PermissionsAndroid } from "react-native";
 import Toast from "react-native-toast-message";
+import { DeviceEventEmitter } from "react-native";
+import { useEffect } from "react";
 
 PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS);
 
 export default function App(props) {
+
   return (
     <>
       <Provider store={store}>

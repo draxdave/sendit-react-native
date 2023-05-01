@@ -39,7 +39,6 @@ const NavComponent = () => {
     return unsubscribe;
   }, []);
 
-
   return (
     <NavigationContainer>
       <Stack.Navigator

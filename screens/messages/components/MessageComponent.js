@@ -15,7 +15,7 @@ export default MessageComponent = ({ message }) => {
         defaultSource={require("../../../assets/icon.png")}
       />
       <View>
-        <SText style={styles.senderName}>Sender Name</SText>
+        <SText style={styles.senderName}>{message.senderName}</SText>
 
         <Card style={styles.card} elevation={7}>
           <SText textType="body">{message.content}</SText>

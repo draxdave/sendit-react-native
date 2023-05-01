@@ -1,5 +1,6 @@
 import { useState } from "react";
 import {
+  DeviceEventEmitter,
   FlatList,
   Image,
   Modal,
@@ -17,11 +18,29 @@ import NoConnectionIcon from "../connections/assets/images/NoConnectionIcon";
 import ConnectionComponent from "../connections/components/ConnectionComponent";
 import SText from "../../src/components/SText";
 import ShareConnectionComponent from "./components/ShareConnectionComponent";
+import { useEffect } from "react";
+import MessageComponent from "../messages/components/MessageComponent";
 
 export default ShareModal = ({ networkApi }) => {
   const [modalVisible, setModalVisible] = useState(true);
   const connections = useSelector((state) => state.CoreReducer.connections);
   const [loading, setLoading] = useState(false);
+  const [textToShare, setTextToShare] = useState(null);
+
+  useEffect(() => {
+    DeviceEventEmitter.addListener("broadcaster-data-received", (data) => {
+      const event = data["event"];
+      if (event === "newSharedText"){
+        const text = data["text"];
+        console.log("New text to share received: ", text);
+
+      }
+    });
+  }, []);
+  
+  if(textToShare){
+    setModalVisible(true)
+  }
 
   return (
     <SafeAreaView>
@@ -43,6 +62,11 @@ export default ShareModal = ({ networkApi }) => {
               <SText style={styles.subHeader} textType="body">
                 Select a connection to share the content with.
               </SText>
+              <MessageComponent message={{
+                send_date: new Date().toISOString(),
+                content: textToShare,
+                
+              }} />
               <Pressable
                 onPress={() => {
                   setModalVisible(false);
