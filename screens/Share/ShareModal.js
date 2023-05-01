@@ -22,10 +22,10 @@ import { useEffect } from "react";
 import MessageComponent from "../messages/components/MessageComponent";
 
 export default ShareModal = ({ networkApi }) => {
-  const [modalVisible, setModalVisible] = useState(true);
+  const [modalVisible, setModalVisible] = useState(false);
   const connections = useSelector((state) => state.CoreReducer.connections);
   const [loading, setLoading] = useState(false);
-  const [textToShare, setTextToShare] = useState(null);
+  const [textToShare, setTextToShare] = useState("null");
 
   useEffect(() => {
     DeviceEventEmitter.addListener("broadcaster-data-received", (data) => {
@@ -35,11 +35,48 @@ export default ShareModal = ({ networkApi }) => {
         console.log("New text to share received: ", text);
       }
     });
+
+    if (textToShare) {
+      setModalVisible(true);
+    }
   }, []);
 
-  if (textToShare) {
-    setModalVisible(true);
-  }
+  const handleConnectionSelect = (connection) => {
+    setLoading(true);
+    handleShareContent(connection.id);
+  };
+
+  const handleShareContent = async (conectionId) => {
+    const data = {
+      connection_id: conectionId,
+      content: textToShare,
+      type: 100,
+    };
+    const callback = {
+      onSuccess: (json) => {
+        setLoading(false);
+        Toast.show({
+          type: "success",
+          text1: "Sent it!",
+          text2: "The message is shared with the connection.",
+        });
+        setTextToShare(null);
+      },
+      onFailure: (json) => {
+        setLoading(false);
+        Toast.show({
+          type: "error",
+          text1: "An error occurred",
+          text2: json.error.description,
+        });
+      },
+    };
+    networkApi.call({
+      request: "share",
+      data: data,
+      callback: callback,
+    });
+  };
 
   return (
     <SafeAreaView>
@@ -61,13 +98,6 @@ export default ShareModal = ({ networkApi }) => {
               <SText style={styles.subHeader} textType="body">
                 Select a connection to share the content with.
               </SText>
-              <MessageComponent
-                message={{
-                  send_date: new Date().toISOString(),
-                  content: textToShare,
-                  senderName: "",
-                }}
-              />
               <Pressable
                 onPress={() => {
                   setModalVisible(false);
@@ -81,23 +111,35 @@ export default ShareModal = ({ networkApi }) => {
               </Pressable>
             </View>
             {connections.length > 0 ? (
-              <FlatList
-                contentContainerStyle={{ paddingBottom: 20 }}
-                style={styles.list}
-                data={connections}
-                refreshControl={
-                  <RefreshControl
-                    refreshing={loading}
-                    onRefresh={() => {
-                      setModalVisible(false);
-                    }}
-                  />
-                }
-                renderItem={({ item }) => (
-                  <ShareConnectionComponent connection={item} />
-                )}
-                keyExtractor={(item, index) => item.id}
-              />
+              <>
+                <MessageComponent
+                  message={{
+                    send_date: Date.now() / 1000,
+                    content: textToShare,
+                    senderName: "",
+                  }}
+                />
+                <FlatList
+                  contentContainerStyle={{ paddingBottom: 20 }}
+                  style={styles.list}
+                  data={connections}
+                  refreshControl={
+                    <RefreshControl
+                      refreshing={loading}
+                      onRefresh={() => {
+                        setModalVisible(false);
+                      }}
+                    />
+                  }
+                  renderItem={({ item }) => (
+                    <ShareConnectionComponent
+                      connection={item}
+                      onSelect={handleConnectionSelect}
+                    />
+                  )}
+                  keyExtractor={(item, index) => item.id}
+                />
+              </>
             ) : (
               <View style={styles.emptyContainer}>
                 <SText textType="secondary">No paired devices yet.</SText>
