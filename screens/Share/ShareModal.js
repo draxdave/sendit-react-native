@@ -1,5 +1,6 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import {
+  BackHandler,
   DeviceEventEmitter,
   FlatList,
   Image,
@@ -12,7 +13,7 @@ import {
   Text,
   View,
 } from "react-native";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import LoadingComponent from "../../src/components/LoadingComponent";
 import NoConnectionIcon from "../connections/assets/images/NoConnectionIcon";
 import ConnectionComponent from "../connections/components/ConnectionComponent";
@@ -20,12 +21,17 @@ import SText from "../../src/components/SText";
 import ShareConnectionComponent from "./components/ShareConnectionComponent";
 import { useEffect } from "react";
 import MessageComponent from "../messages/components/MessageComponent";
+import NetworkApiComponent from "../../src/components/network/NetworkApiComponent";
+import Toast from "react-native-toast-message";
+import { UpdateMessages } from "../../src/storage/redux/CoreAction";
 
-export default ShareModal = ({ networkApi }) => {
+export default ShareModal = () => {
   const [modalVisible, setModalVisible] = useState(false);
+  const dispatch = useDispatch();
+  let networkApi = undefined;
   const connections = useSelector((state) => state.CoreReducer.connections);
   const [loading, setLoading] = useState(false);
-  const [textToShare, setTextToShare] = useState("null");
+  const [textToShare, setTextToShare] = useState(null);
 
   useEffect(() => {
     DeviceEventEmitter.addListener("broadcaster-data-received", (data) => {
@@ -33,14 +39,17 @@ export default ShareModal = ({ networkApi }) => {
       if (event === "newSharedText") {
         const text = data["text"];
         console.log("New text to share received: ", text);
+        if (textToShare !== text) {
+          setTextToShare(text);
+          setModalVisible(true);
+        }
       }
     });
-
-    if (textToShare) {
-      setModalVisible(true);
-    }
   }, []);
 
+  if (textToShare === undefined) {
+    setModalVisible(false);
+  }
   const handleConnectionSelect = (connection) => {
     setLoading(true);
     handleShareContent(connection.id);
@@ -54,19 +63,22 @@ export default ShareModal = ({ networkApi }) => {
     };
     const callback = {
       onSuccess: (json) => {
+        const message = json.data.transaction;
         setLoading(false);
+        dispatch(UpdateMessages(message));
         Toast.show({
           type: "success",
           text1: "Sent it!",
           text2: "The message is shared with the connection.",
         });
         setTextToShare(null);
+        BackHandler.exitApp();
       },
       onFailure: (json) => {
         setLoading(false);
         Toast.show({
           type: "error",
-          text1: "An error occurred",
+          text1: "An error occurred. Please try again.",
           text2: json.error.description,
         });
       },
@@ -79,77 +91,79 @@ export default ShareModal = ({ networkApi }) => {
   };
 
   return (
-    <SafeAreaView>
-      <Modal
-        animationType="slide"
-        transparent={true}
-        visible={modalVisible}
-        statusBarTranslucent={true}
-        onRequestClose={() => {
-          setModalVisible(!modalVisible);
-        }}
-      >
-        <View style={styles.modalContainer}>
-          <View style={styles.modal}>
-            <View style={styles.header}>
-              <SText style={styles.headerText} textType="Secondary">
-                Send It!
-              </SText>
-              <SText style={styles.subHeader} textType="body">
-                Select a connection to share the content with.
-              </SText>
-              <Pressable
-                onPress={() => {
-                  setModalVisible(false);
-                }}
-                style={styles.closeBtn}
-              >
-                <Image
-                  source={require("./assets/images/closeIcon.png")}
-                  style={{ width: 12, height: 12 }}
-                />
-              </Pressable>
-            </View>
-            {connections.length > 0 ? (
-              <>
-                <MessageComponent
-                  message={{
-                    send_date: Date.now() / 1000,
-                    content: textToShare,
-                    senderName: "",
+    <NetworkApiComponent innerRef={(instance) => (networkApi = instance)}>
+      <SafeAreaView>
+        <Modal
+          animationType="slide"
+          transparent={true}
+          visible={modalVisible}
+          statusBarTranslucent={true}
+          onRequestClose={() => {
+            setModalVisible(!modalVisible);
+          }}
+        >
+          <View style={styles.modalContainer}>
+            <View style={styles.modal}>
+              <View style={styles.header}>
+                <SText style={styles.headerText} textType="Secondary">
+                  Send It!
+                </SText>
+                <SText style={styles.subHeader} textType="body">
+                  Select a connection to share the content with.
+                </SText>
+                <Pressable
+                  onPress={() => {
+                    setModalVisible(false);
                   }}
-                />
-                <FlatList
-                  contentContainerStyle={{ paddingBottom: 20 }}
-                  style={styles.list}
-                  data={connections}
-                  refreshControl={
-                    <RefreshControl
-                      refreshing={loading}
-                      onRefresh={() => {
-                        setModalVisible(false);
-                      }}
-                    />
-                  }
-                  renderItem={({ item }) => (
-                    <ShareConnectionComponent
-                      connection={item}
-                      onSelect={handleConnectionSelect}
-                    />
-                  )}
-                  keyExtractor={(item, index) => item.id}
-                />
-              </>
-            ) : (
-              <View style={styles.emptyContainer}>
-                <SText textType="secondary">No paired devices yet.</SText>
-                <NoConnectionIcon />
+                  style={styles.closeBtn}
+                >
+                  <Image
+                    source={require("./assets/images/closeIcon.png")}
+                    style={{ width: 12, height: 12 }}
+                  />
+                </Pressable>
               </View>
-            )}
+              {connections.length > 0 ? (
+                <>
+                  <MessageComponent
+                    message={{
+                      send_date: Date.now() / 1000,
+                      content: textToShare,
+                      senderName: "",
+                    }}
+                  />
+                  <FlatList
+                    contentContainerStyle={{ paddingBottom: 20 }}
+                    style={styles.list}
+                    data={connections}
+                    refreshControl={
+                      <RefreshControl
+                        refreshing={loading}
+                        onRefresh={() => {
+                          setModalVisible(false);
+                        }}
+                      />
+                    }
+                    renderItem={({ item }) => (
+                      <ShareConnectionComponent
+                        connection={item}
+                        onSelect={handleConnectionSelect}
+                      />
+                    )}
+                    keyExtractor={(item, index) => item.id}
+                  />
+                </>
+              ) : (
+                <View style={styles.emptyContainer}>
+                  <SText textType="secondary">No paired devices yet.</SText>
+                  <NoConnectionIcon />
+                </View>
+              )}
+            </View>
           </View>
-        </View>
-      </Modal>
-    </SafeAreaView>
+        </Modal>
+      </SafeAreaView>
+    </NetworkApiComponent>
   );
 };
 
