@@ -21,8 +21,6 @@ export default MessagesListComponent = ({ networkApi }) => {
   const connections = useSelector((state) => state.CoreReducer.connections);
   const messages = useSelector((state) => state.CoreReducer.messages);
 
-  console.log("messages", messages);
-
   const wallpaper = `${SERVER_ADDRESS}/img/chat_background_02.jpg`;
 
   return (

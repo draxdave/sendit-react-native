@@ -18,6 +18,8 @@ messaging().setBackgroundMessageHandler(async (remoteMessage) => {
 
 const NavComponent = () => {
   const dispatch = useDispatch();
+  const user = useSelector((state) => state.LoginReducer.user);
+  const device = useSelector((state) => state.LoginReducer.device);
 
   const handleNewContent = (content) => {
     dispatch(UpdateMessages(content));
@@ -37,8 +39,6 @@ const NavComponent = () => {
     return unsubscribe;
   }, []);
 
-  const user = useSelector((state) => state.LoginReducer.user);
-  const device = useSelector((state) => state.LoginReducer.device);
 
   return (
     <NavigationContainer>
