@@ -4,7 +4,7 @@ This project is a clone of the original Sendit app created by thesiamak (https:/
 
 ## Features
 
-The following features have been implemented in this app:
+### The following features have been implemented in this app:
 
 1. Integration with Google authentication and single sign-on.
 2. Integration with Firebase services, including messaging and analytics.
@@ -15,7 +15,9 @@ The following features have been implemented in this app:
 7. Database and local storage for messages and device connections.
 8. Error handling and job interception for better user experience.
 
-The following features have not been implemented in this MVP:
+
+
+### The following features have not been implemented in this MVP:
 
 1. Sign up with username and password.
 2. Password reset functionality.
@@ -25,9 +27,16 @@ The following features have not been implemented in this MVP:
 6. Some UI/layout animations.
 7. Splash screen (React Native has a default splash screen).
 
+## Screenshots
+<img src="./assets/screenshots/Screenshot_android_devices.png" width="128"/>
+<img src="./assets/screenshots/Screenshot_1683073361.png" width="128"/>
+<img src="./assets/screenshots/Screenshot_1683073599.png" width="128"/>
+<img src="./assets/screenshots/Screenshot_1683073357.png" width="128"/>
+<img src="./assets/screenshots/Simulator Screenshot - iPhone SE (3rd generation) - 2023-05-03 at 08.27.25.png" width="128"/>
+
 ## React Native Technologies Used
 
-The following React Native technologies have been used in this project:
+### The following React Native technologies have been used in this project:
 
 1. Basic widgets for creating the UI.
 2. Custom UI and headless components.
