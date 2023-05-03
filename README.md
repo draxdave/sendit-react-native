@@ -28,11 +28,7 @@ This project is a clone of the original Sendit app created by thesiamak (https:/
 7. Splash screen (React Native has a default splash screen).
 
 ## Screenshots
-<img src="./assets/screenshots/Screenshot_android_devices.png" width="128"/>
-<img src="./assets/screenshots/Screenshot_1683073361.png" width="128"/>
-<img src="./assets/screenshots/Screenshot_1683073599.png" width="128"/>
-<img src="./assets/screenshots/Screenshot_1683073357.png" width="128"/>
-<img src="./assets/screenshots/Simulator Screenshot - iPhone SE (3rd generation) - 2023-05-03 at 08.27.25.png" width="128"/>
+<img src="./assets/screenshots/Screenshot_android_devices.png" width="168"/> <img src="./assets/screenshots/Screenshot_1683073361.png" width="168"/> <img src="./assets/screenshots/Screenshot_1683073599.png" width="168"/> <img src="./assets/screenshots/Screenshot_1683073357.png" width="168"/> <img src="./assets/screenshots/Simulator Screenshot - iPhone SE (3rd generation) - 2023-05-03 at 08.27.25.png" width="268"/>
 
 ## React Native Technologies Used
 
