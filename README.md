@@ -2,6 +2,10 @@
 
 This project is a clone of the original Sendit app created by thesiamak (https://github.com/thesiamak/sendit). The goal of this project is to implement a minimal viable product (MVP) of Sendit using React Native and compare it with the original Kotlin-based implementation.
 
+## Article
+Read this for more info and comparison details:
+https://medium.com/@the_siamak/react-native-vs-android-a-comprehensive-comparison-c2fddea0c803
+
 ## Features
 
 ### The following features have been implemented in this app:
